@@ -1,0 +1,34 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: hsla(180, 100%, 50%, 0.5);
+    display: grid;
+    place-items: center;
+}
+
+.keyboard {
+    width: 80%;
+    height: 60vh;
+    background-color: darkslategray;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-evenly;
+    &__whiteKey {
+        height: 100%;
+        width: 25px;
+        background-color: white;
+        flex-grow: 1;
+        display: inline-block;
+        &:hover {
+            background-color: beige;
+        }
+    }
+}
