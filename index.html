@@ -9,20 +9,36 @@
 <body>
     <div class="volumes">
         <div class="slideContainer">
-            <input type="range" min="1" max="100" value="50" class="slider" id="oscillatorOneVolume">
-            <label for="oscillatorOneVolume"><h2>Osc 1 Vol</h2></label>
+            <input type="range" min="1" max="100" value="100" defaultValue="0" class="slider" id="oscOneVol">
+            <label for="oscOneVol"><h2>Osc 1 Vol</h2></label>
         </div>
-        <div class="slideContainer"></div>
+        <div class="slideContainer">
+            <input type="range" min="1" max="100" value="0" class="slider" id="oscTwoVol">
+            <label for="oscTwoVol"><h2>Osc 2 Vol</h2></label>
+        </div>
+        <div class="slideContainer">
+            <input type="range" min="1" max="100" value="0" class="slider" id="masterVol">
+            <label for="masterVol"><h2>Master Vol</h2></label>
+        </div>
     </div>
+    <label for="rangeSelect">Range</label>
+    <select name="range" id="rangeSelect" size="6">
+        <option id="range2" value="2" aria-selected="true">2'</option>
+        <option id="range4" value="4">4'</option>
+        <option id="range8" value="8">8'</option>
+        <option id="range16" value="16">16'</option>
+        <option id="range32" value="32">32'</option>
+        <option id="rangeLo" value="Lo">LO'</option>
+    </select>
     <div class="keyboard">
-        <div data-note="c4" class="keyboard__whiteKey"></div>
-        <div data-note="d4" class="keyboard__whiteKey"></div>
-        <div data-note="e4" class="keyboard__whiteKey"></div>
-        <div data-note="f4" class="keyboard__whiteKey"></div>
-        <div data-note="g4" class="keyboard__whiteKey"></div>
-        <div data-note="a5" class="keyboard__whiteKey"></div>
-        <div data-note="b5" class="keyboard__whiteKey"></div>
-        <div data-note="c5" class="keyboard__whiteKey"></div>
+        <button data-note="a" class="keyboard__whiteKey"></button>
+        <button data-note="b" class="keyboard__whiteKey"></button>
+        <button data-note="c" class="keyboard__whiteKey"></button>
+        <button data-note="d" class="keyboard__whiteKey"></button>
+        <button data-note="e" class="keyboard__whiteKey"></button>
+        <button data-note="f" class="keyboard__whiteKey"></button>
+        <button data-note="g" class="keyboard__whiteKey"></button>
+        <button data-note="a" class="keyboard__whiteKey"></button>
     </div>
     <script src="/app.js" defer></script>
 </body>
