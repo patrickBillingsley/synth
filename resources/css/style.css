@@ -17,30 +17,24 @@ body {
   place-items: center;
 }
 
-.keyboard {
-  width: 80%;
+.container {
+  width: 90vw;
   height: 60vh;
   background-color: darkslategray;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  gap: 1rem;
-  -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  white-space: nowrap;
+  overflow: scroll;
+  scrollbar-width: none;
 }
 
-.keyboard__whiteKey {
-  height: 100%;
-  width: 25px;
-  background-color: white;
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+.octave {
   display: inline-block;
 }
 
-.keyboard__whiteKey:hover {
-  background-color: beige;
+.key {
+  width: 100px;
+  height: 60vh;
+  margin: 0 2px;
+  background-color: ivory;
+  display: inline-block;
 }
 /*# sourceMappingURL=style.css.map */

@@ -123,33 +123,36 @@
 
 
 class Oscillator {
-    constructor(context, outDest) {
+    constructor(context, outDest, freq) {
         this.context = context;
         this.outDest = outDest;
-        this.range = 'range2';
+        this.freq = freq;
         this.osc = context.createOscillator();
         this.lvl = context.createGain();
         this.osc.connect(this.lvl);
         this.osc.start();
+        this.play(freq);
     }
-    play(freq, vol) {
-        this.osc.frequency.exponentialRampToValueAtTime(freq, this.context.currentTime);
-        this.setVol(vol);
-        this.lvl.connect(this.outDest);
+    play(freq) {
+        this.lvl.gain.setValueAtTime(0.001, this.context.currentTime);
+        this.lvl.connect(masterVol);
+        this.lvl.gain.exponentialRampToValueAtTime(0.25, this.context.currentTime + 2);
+        this.osc.frequency.setValueAtTime(440, this.context.currentTime);
+        this.osc.frequency.linearRampToValueAtTime(freq, this.context.currentTime);
     }
     stop() {
-        this.lvl.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime);
-        this.lvl.disconnect(this.outDest);
-    }
-    setVol(knobVal) {
-        this.lvl.gain.exponentialRampToValueAtTime(knobVal, this.context.currentTime);
-    }
-    setRange(range) {
-        this.range = range;
+        // this.lvl.gain.cancelScheduledValues(this.context.currentTime);
+        this.lvl.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 2);
     }
 }
 
+
+
+
 const context = new (window.AudioContext || window.webkitAudioContext)();
+
+
+
 
 const range2  =  { a: 440.00, bb: 466.16, b: 493.88, c: 523.25, db: 554.37, d: 587.33, eb: 622.25, e: 659.25, f: 698.46, gb: 739.99, g: 783.99, ab: 830.61 }
 const range4  = halfFrequencies(range2);
@@ -158,39 +161,40 @@ const range16 = halfFrequencies(range8);
 const range32 = halfFrequencies(range16);
 const rangeLo = halfFrequencies(range32);
 
+
+
+
 const masterVol = context.createGain();
 masterVol.connect(context.destination);
 
-const oscOne = new Oscillator(context, masterVol);
 
-const oscTwo = new Oscillator(context, masterVol);
 
-oscTwo.osc.type = 'square';
 
 const oscOneVolKnob = document.getElementById('oscOneVol');
-oscOne.lvl.gain.value = oscOneVolKnob.value/100;
 oscOneVolKnob.addEventListener('input', event => {
-    const level = event.target.value/100;
+    const level = event.target.value;
     oscOne.lvl.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.1);
 })
 
-const oscTwoVolKnob = document.getElementById('oscTwoVol');
-oscTwo.lvl.gain.value = oscTwoVolKnob.value/100;
-oscTwoVolKnob.addEventListener('input', event => {
-    const level = event.target.value/100;
-    oscTwo.lvl.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.1);
-})
 const masterVolKnob = document.getElementById('masterVol');
-masterVol.gain.value = masterVolKnob.value/1000;
 masterVolKnob.addEventListener('input', event => {
-    const level = event.target.value/1000;
+    const level = event.target.value;
     masterVol.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.1);
 })
+
 const oscOneRange = document.getElementById('rangeSelect');
 oscOneRange.addEventListener('input', event => {
     oscOne.range = 'range' + event.target.value;
     console.log(oscOne.range);
 })
+
+
+
+
+const oscOne = [];
+
+
+
 
 const keys = document.querySelectorAll('[data-note]');
 keys.forEach(key => {
@@ -199,14 +203,18 @@ keys.forEach(key => {
         Object.entries(range2).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
-                oscOne.play(freq, 0.25);
+                oscOne.unshift(new Oscillator(context, masterVol, freq));
             }
         })
     })
     key.addEventListener('mouseout', () => {
-        oscOne.stop();
+        oscOne[0].stop();
+        oscOne.splice(0);
     })
 })
+
+
+
 
 function halfFrequencies(freqObj) {
     const keysArray = Object.keys(freqObj);
@@ -222,6 +230,3 @@ function toObject(keys, values) {
     }
     return newObj;
 }
-
-// oscOne.play(440, oscOneVolKnob.value/100);
-// oscTwo.play(330, oscTwoVolKnob.value/100);

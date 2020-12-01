@@ -7,39 +7,29 @@
     <title>Synthesis</title>
 </head>
 <body>
-    <div class="volumes">
-        <div class="slideContainer">
-            <input type="range" min="1" max="100" value="100" defaultValue="0" class="slider" id="oscOneVol">
-            <label for="oscOneVol"><h2>Osc 1 Vol</h2></label>
+    <div class="container">
+        <div class="keyboard"></div>
+    </div>
+    <div class="settingsBar">
+        <div class="left">
+            <span>Volume: </span>
+            <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="volume">
+            <datalist id="volumes">
+                <option value="0.0" label="Mute"></option>
+                <option value="1.0" label="100%"></option>
+            </datalist>
         </div>
-        <div class="slideContainer">
-            <input type="range" min="1" max="100" value="0" class="slider" id="oscTwoVol">
-            <label for="oscTwoVol"><h2>Osc 2 Vol</h2></label>
-        </div>
-        <div class="slideContainer">
-            <input type="range" min="1" max="100" value="0" class="slider" id="masterVol">
-            <label for="masterVol"><h2>Master Vol</h2></label>
+        <div class="right">
+            <span>Current waveform: </span>
+            <select name="waveform">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="triangle">Triangle</option>
+                <option value="custom">Custom</option>
+            </select>
         </div>
     </div>
-    <label for="rangeSelect">Range</label>
-    <select name="range" id="rangeSelect" size="6">
-        <option id="range2" value="2" aria-selected="true">2'</option>
-        <option id="range4" value="4">4'</option>
-        <option id="range8" value="8">8'</option>
-        <option id="range16" value="16">16'</option>
-        <option id="range32" value="32">32'</option>
-        <option id="rangeLo" value="Lo">LO'</option>
-    </select>
-    <div class="keyboard">
-        <button data-note="a" class="keyboard__whiteKey"></button>
-        <button data-note="b" class="keyboard__whiteKey"></button>
-        <button data-note="c" class="keyboard__whiteKey"></button>
-        <button data-note="d" class="keyboard__whiteKey"></button>
-        <button data-note="e" class="keyboard__whiteKey"></button>
-        <button data-note="f" class="keyboard__whiteKey"></button>
-        <button data-note="g" class="keyboard__whiteKey"></button>
-        <button data-note="a" class="keyboard__whiteKey"></button>
-    </div>
-    <script src="/app.js" defer></script>
+    <script src="/app2.js" defer></script>
 </body>
 </html>

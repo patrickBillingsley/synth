@@ -14,21 +14,22 @@ body {
     display: grid;
     place-items: center;
 }
-.keyboard {
-    width: 80%;
+
+.container {
+    width: 90vw;
     height: 60vh;
     background-color: darkslategray;
-    display: flex;
-    gap: 1rem;
-    justify-content: space-evenly;
-    &__whiteKey {
-        height: 100%;
-        width: 25px;
-        background-color: white;
-        flex-grow: 1;
-        display: inline-block;
-        &:hover {
-            background-color: beige;
-        }
-    }
+    white-space: nowrap;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+.octave {
+    display: inline-block;
+}
+.key {
+    width: 100px;
+    height: 60vh;
+    margin: 0 2px;
+    background-color: ivory;
+    display: inline-block;
 }
