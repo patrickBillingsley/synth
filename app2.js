@@ -14,7 +14,7 @@ let cosineTerms = null;
 function createNoteTable() {
     const noteFreq = [];
     let fundamental = 27.5;
-    let interval = fundamental * 2 / 12;
+    let interval = createInterval(fundamental);
     for (let i=0; i<9; i++) {
         noteFreq[i] = [];
     }
@@ -33,8 +33,8 @@ function createNoteTable() {
     noteFreq[1]["Ab"] = interval * 11 + fundamental;
     
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
-
+    interval = createInterval(fundamental);
+    
     noteFreq[1]["A"] = fundamental;
     noteFreq[1]["Bb"] = interval + fundamental;
     noteFreq[1]["B"] = interval * 2 + fundamental;
@@ -50,8 +50,8 @@ function createNoteTable() {
     noteFreq[2]["Ab"] = interval * 11 + fundamental;
     
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
-
+    interval = createInterval(fundamental);
+    
     noteFreq[2]["A"] = fundamental;
     noteFreq[2]["Bb"] = interval + fundamental;
     noteFreq[2]["B"] = interval * 2 + fundamental;
@@ -67,7 +67,7 @@ function createNoteTable() {
     noteFreq[3]["Ab"] = interval * 11 + fundamental;
     
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
+    interval = createInterval(fundamental);
 
     noteFreq[3]["A"] = fundamental;
     noteFreq[3]["Bb"] = interval + fundamental;
@@ -84,7 +84,7 @@ function createNoteTable() {
     noteFreq[4]["Ab"] = interval * 11 + fundamental;
 
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
+    interval = createInterval(fundamental);
 
     noteFreq[4]["A"] = fundamental;
     noteFreq[4]["Bb"] = interval + fundamental;
@@ -101,7 +101,7 @@ function createNoteTable() {
     noteFreq[5]["Ab"] = interval * 11 + fundamental;
 
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
+    interval = createInterval(fundamental);
 
     noteFreq[5]["A"] = fundamental;
     noteFreq[5]["Bb"] = interval + fundamental;
@@ -118,7 +118,7 @@ function createNoteTable() {
     noteFreq[6]["Ab"] = interval * 11 + fundamental;
 
     fundamental *= 2;
-    interval = fundamental * 2 / 12;
+    interval = createInterval(fundamental);
 
     noteFreq[6]["A"] = fundamental;
     noteFreq[6]["Bb"] = interval + fundamental;
@@ -139,6 +139,10 @@ function createNoteTable() {
     return noteFreq;
 }
 
+function createInterval(fundamental) {
+    return (fundamental * 2 - fundamental) / 12;
+}
+
 function setup() {
     let noteFreq = createNoteTable();
 
@@ -148,12 +152,12 @@ function setup() {
     masterGainNode.connect(audioContext.destination);
     masterGainNode.gain.value = volumeControl.value;
 
-    noteFreq.forEach(function(keys, idx) {
+    noteFreq.forEach((keys, idx) => {
         let keyList = Object.entries(keys);
         let octaveElem = document.createElement('div');
         octaveElem.className = 'octave';
 
-        keyList.forEach(function(key) {
+        keyList.forEach(key => {
             if(key[0].length == 1) {
                 octaveElem.appendChild(createKey(key[0], idx, key[1]));
             }
@@ -165,9 +169,9 @@ function setup() {
     document.querySelector('div[data-note="B"][data-octave="5"]').scrollIntoView(false);
 
     sineTerms = new Float32Array([0, 0, 1, 0, 1]);
-    cosineTerms = new Float32Array([sineTerms.length]);
+    cosineTerms = new Float32Array([1, 0, 0, 1, 1]);
     customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
-
+    
     for (i=0; i<9; i++) {
         oscList[i] = [];
     }
@@ -178,45 +182,49 @@ setup();
 function createKey(note, octave, freq) {
     let keyElement = document.createElement('div');
     let labelElement = document.createElement('div');
-
+    
     keyElement.className = 'key';
     keyElement.dataset['octave'] = octave;
     keyElement.dataset['note'] = note;
     keyElement.dataset['frequency'] = freq;
-
+    
     labelElement.innerHTML = note + '<sub>' + octave + '</sub>';
     keyElement.appendChild(labelElement);
-
+    
     keyElement.addEventListener('mousedown', notePressed, false);
     keyElement.addEventListener('mouseup', noteReleased, false);
     keyElement.addEventListener('mouseover', notePressed, false);
     keyElement.addEventListener('mouseleave', noteReleased, false);
-
+    
     return keyElement;
 }
 
 function playTone(freq) {
     let osc = audioContext.createOscillator();
-    osc.connect(masterGainNode);
-
+    let lvl = audioContext.createGain();
+    osc.connect(lvl);
+    lvl.connect(masterGainNode);
+    
     let type = wavePicker.options[wavePicker.selectedIndex].value;
-
+    
     if(type == 'custom') {
         osc.setPeriodicWave(customWaveform);
     } else {
         osc.type = type;
     }
-
+    
     osc.frequency.value = freq;
+    lvl.gain.setValueAtTime(0.001, audioContext.currentTime);
     osc.start();
-
-    return osc;
+    lvl.gain.exponentialRampToValueAtTime(1, audioContext.currentTime + 1);
+    
+    return [osc, lvl];
 }
 
 function notePressed(event) {
     if(event.buttons & 1) {
         let dataset = event.target.dataset;
-
+        
         if(!dataset['pressed']) {
             oscList[dataset['octave'][dataset['note']]] = playTone(dataset['frequency']);
             dataset['pressed'] = 'yes';
@@ -226,9 +234,12 @@ function notePressed(event) {
 
 function noteReleased(event) {
     let dataset = event.target.dataset;
-
+    let currentOsc = oscList[dataset['octave'][dataset['note']]];
     if(dataset && dataset['pressed']) {
-        oscList[dataset['octave'][dataset['note']]].stop();
+        currentOsc[1].gain.setValueAtTime(currentOsc[1].gain.value, audioContext.currentTime);
+        currentOsc[1].gain.cancelScheduledValues(audioContext.currentTime + 0.001);
+        currentOsc[1].gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 4);
+        currentOsc[0].stop(audioContext.currentTime + 4)
         oscList[dataset['octave'][dataset['note']]] = null;
         delete dataset['pressed'];
     }
