@@ -123,16 +123,17 @@
 
 
 class Oscillator {
-    constructor(context, outDest) {
+    constructor(context, outDest, volume, waveform, range) {
         this.context = context;
         this.outDest = outDest;
-        this.range = 4;
-        this.volume = 0.0001;
+        this.range = range;
+        this.volume = volume;
         this.osc = context.createOscillator();
+        this.osc.type = waveform;
         this.lvl = context.createGain();
         this.osc.connect(this.lvl);
         this.lvl.connect(masterVolume);
-        this.lvl.gain.setValueAtTime(this.volume, this.context.currentTime);
+        this.stop();
         this.osc.start();
     }
     play(freq) {
@@ -216,8 +217,11 @@ oscTwoWaveform.addEventListener('input', event => {
     oscTwo.osc.type = event.target.value;
 })
 
-const oscOne = new Oscillator(context, masterVolume);
-const oscTwo = new Oscillator(context, masterVolume);
+const oscOne = new Oscillator(context, masterVolume, oscOneVolume.value, oscOneWaveform.value, Number(oscOneRange.value));
+
+const oscTwo = new Oscillator(context, masterVolume, oscTwoVolume.value, oscTwoWaveform.value, Number(oscTwoRange.value));
+
+masterVolume.gain.setValueAtTime(masterVolumeElement.value / 5, context.currentTime);
 
 
 
@@ -246,11 +250,6 @@ keys.forEach(key => {
         oscTwo.stop();
     })
 })
-
-
-
-const a = Array.from(document.querySelectorAll('[data-note="A"]'));
-console.log(keys[7].dataset.note);
 
 
 
