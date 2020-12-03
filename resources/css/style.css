@@ -33,7 +33,7 @@ body {
 .key {
   width: 100px;
   height: 60vh;
-  margin: 0 2px;
+  margin: 0 3px 0 0;
   background-color: ivory;
   display: inline-block;
 }

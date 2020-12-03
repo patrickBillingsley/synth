@@ -237,7 +237,6 @@ keys.forEach(key => {
                 oscOne.play(freq);
             }
         })
-        console.log(oscTwo.range);
         Object.entries(ranges[oscTwo.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
@@ -250,6 +249,7 @@ keys.forEach(key => {
         oscTwo.stop();
     })
 })
+
 
 
 
