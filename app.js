@@ -123,39 +123,61 @@
 
 
 class Oscillator {
-    constructor(context, outDest, volume, waveform, range) {
-        this.context = context;
+    constructor(outDest, volume, waveform, range) {
         this.outDest = outDest;
         this.range = range;
-        this.volume = volume;
         this.osc = context.createOscillator();
         this.osc.type = waveform;
         this.lvl = context.createGain();
+        this.lvl.gain.setValueAtTime(volume, now);
         this.osc.connect(this.lvl);
-        this.lvl.connect(masterVolume);
-        this.stop();
+        this.lvl.connect(outDest);
         this.osc.start();
     }
     play(freq) {
-        this.lvl.gain.setValueAtTime(this.lvl.gain.value, this.context.currentTime);
-        this.lvl.gain.cancelScheduledValues(this.context.currentTime + 0.001);
-
-        this.osc.frequency.setValueAtTime(freq, this.context.currentTime);
-        this.osc.frequency.cancelScheduledValues(this.context.currentTime + 0.001);
-
-        this.osc.frequency.linearRampToValueAtTime(freq, this.context.currentTime + 1);
-
-        if(this.volume > 0) {
-            this.lvl.gain.exponentialRampToValueAtTime(this.volume, this.context.currentTime + 0.15);
-        }
-    }
-    stop() {
-        this.lvl.gain.setValueAtTime(this.lvl.gain.value, this.context.currentTime);
-        this.lvl.gain.cancelScheduledValues(this.context.currentTime + 0.001);
-        this.lvl.gain.exponentialRampToValueAtTime(0.0001, this.context.currentTime + 0.5);
+        this.osc.frequency.cancelScheduledValues(now);
+        this.osc.frequency.linearRampToValueAtTime(freq, now);
     }
     updateWaveform(waveform) {
         this.osc.type = waveform;
+    }
+}
+class MasterVolume {
+    constructor() {
+        this.lvl = context.createGain();
+        this.lvl.gain.value = 0;
+        this.volume = masterVolumeElement.value / 5;
+    }
+    play() {
+        if(this.lvl.gain.value) {
+            this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
+            this.lvl.gain.cancelScheduledValues(context.currentTime + 0.001);
+        } else {
+            this.lvl.gain.setValueAtTime(0.001, context.currentTime);
+        }
+        this.lvl.gain.exponentialRampToValueAtTime(this.volume, context.currentTime + attackValue);
+    }
+    stop() {
+        if(this.lvl.gain.value) {
+            this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
+            this.lvl.gain.cancelScheduledValues(context.currentTime + 0.001);
+            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime + releaseValue);
+            this.lvl.gain.setValueAtTime(0, context.currentTime + releaseValue);
+        }
+    }
+}
+class LFO {
+    constructor(outputDest) {
+        this.osc = context.createOscillator();
+        this.osc.frequency.value = modulationRateValue;
+        this.lvl = context.createGain();
+        this.lvl.gain.value = modulationDepthValue;
+
+        this.osc.connect(this.lvl);
+        console.log(outputDest);
+        this.lvl.connect(outputDest);
+
+        this.osc.start();
     }
 }
 
@@ -163,6 +185,7 @@ class Oscillator {
 
 
 const context = new (window.AudioContext || window.webkitAudioContext)();
+const now = context.currentTime;
 
 
 
@@ -179,8 +202,6 @@ ranges.unshift(halfFrequencies(ranges[0]));
 
 
 
-const masterVolume = context.createGain();
-masterVolume.connect(context.destination);
 
 
 
@@ -188,26 +209,40 @@ masterVolume.connect(context.destination);
 const oscOneVolume = document.querySelector('[name="oscOneVolume"]');
 oscOneVolume.addEventListener('input', event => {
     const level = event.target.value;
-    oscOne.volume = level;
+    oscOne.lvl.gain.exponentialRampToValueAtTime(level, now);
 })
 const oscTwoVolume = document.querySelector('[name="oscTwoVolume"]');
 oscTwoVolume.addEventListener('input', event => {
     const level = event.target.value;
-    oscTwo.volume = level;
+    oscTwo.lvl.gain.exponentialRampToValueAtTime(level, now);
 })
 const masterVolumeElement = document.querySelector('[name="masterVolume"]');
 masterVolumeElement.addEventListener('input', event => {
     const level = event.target.value / 5;
-    masterVolume.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.001);
+    masterVolume.volume = level;
 })
-const oscOneRange = document.querySelector('[name="oscOneRange"]');
-oscOneRange.addEventListener('input', event => {
-    oscOne.range = Number(event.target.value);
+
+const attack = document.querySelector('[name="attack"]');
+let attackValue = Number(attack.value);
+attack.addEventListener('input', event => {
+    attackValue = Number(event.target.value);
 })
-const oscTwoRange = document.querySelector('[name="oscTwoRange"]');
-oscTwoRange.addEventListener('input', event => {
-    oscTwo.range = Number(event.target.value);
+const release = document.querySelector('[name="release"]');
+let releaseValue = Number(release.value);
+release.addEventListener('input', event => {
+    releaseValue = Number(event.target.value);
 })
+const modulationDepth = document.querySelector('[name="modulation-depth"]');
+let modulationDepthValue = Number(modulationDepth.value);
+modulationDepth.addEventListener('input', event => {
+    lfo.lvl.gain.setValueAtTime(event.target.value, context.currentTime);
+})
+const modulationRate = document.querySelector('[name="modulation-rate"]');
+let modulationRateValue = Number(modulationRate.value);
+modulationRate.addEventListener('input', event => {
+    lfo.osc.frequency.setValueAtTime(event.target.value, context.currentTime);
+})
+
 const oscOneWaveform = document.querySelector('[name="oscOneWaveform"]')
 oscOneWaveform.addEventListener('input', event => {
     oscOne.updateWaveform(event.target.value);
@@ -217,12 +252,24 @@ oscTwoWaveform.addEventListener('input', event => {
     oscTwo.osc.type = event.target.value;
 })
 
-const oscOne = new Oscillator(context, masterVolume, oscOneVolume.value, oscOneWaveform.value, Number(oscOneRange.value));
+const oscOneRange = document.querySelector('[name="oscOneRange"]');
+oscOneRange.addEventListener('input', event => {
+    oscOne.range = Number(event.target.value);
+})
+const oscTwoRange = document.querySelector('[name="oscTwoRange"]');
+oscTwoRange.addEventListener('input', event => {
+    oscTwo.range = Number(event.target.value);
+})
 
-const oscTwo = new Oscillator(context, masterVolume, oscTwoVolume.value, oscTwoWaveform.value, Number(oscTwoRange.value));
 
-masterVolume.gain.setValueAtTime(masterVolumeElement.value / 5, context.currentTime);
+const masterVolume = new MasterVolume();
+masterVolume.lvl.connect(context.destination);
 
+const oscOne = new Oscillator(masterVolume.lvl, oscOneVolume.value, oscOneWaveform.value, Number(oscOneRange.value));
+const oscTwo = new Oscillator(masterVolume.lvl, oscTwoVolume.value, oscTwoWaveform.value, Number(oscTwoRange.value));
+
+console.log(oscOne.lvl.gain);
+const lfo = new LFO(oscOne.osc.frequency);
 
 
 
@@ -243,13 +290,12 @@ keys.forEach(key => {
                 oscTwo.play(freq);
             }
         })
+        masterVolume.play();
     })
     key.addEventListener('mouseout', () => {
-        oscOne.stop();
-        oscTwo.stop();
+        masterVolume.stop();
     })
 })
-
 
 
 
@@ -274,4 +320,8 @@ function toObject(keys, values) {
         newObj[keys[i]] = values[i];
     }
     return newObj;
+}
+
+function envelope() {
+
 }

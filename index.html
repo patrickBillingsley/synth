@@ -7,59 +7,71 @@
     <title>Synthesis</title>
 </head>
 <body>
-    <div class="container">
-        <div class="keyboard">
-            <div class="key" data-note="A" data-octave="0">A</div><div class="key" data-note="B" data-octave="0">B</div><div class="key" data-note="C" data-octave="0">C</div><div class="key" data-note="D" data-octave="0">D</div><div class="key" data-note="E" data-octave="0">E</div><div class="key" data-note="F" data-octave="0">F</div><div class="key" data-note="G" data-octave="0">G</div><div class="key" data-note="A" data-octave="1">A</div><div class="key" data-note="B" data-octave="1">B</div><div class="key" data-note="C" data-octave="1">C</div><div class="key" data-note="D" data-octave="1">D</div><div class="key" data-note="E" data-octave="1">E</div><div class="key" data-note="F" data-octave="1">F</div><div class="key" data-note="G" data-octave="1">G</div><div class="key" data-note="A" data-octave="2">A</div>
-        </div>
+<div class="container">
+    <div class="keyboard">
+        <div class="key" data-note="A" data-octave="0">A</div><div class="key" data-note="B" data-octave="0">B</div><div class="key" data-note="C" data-octave="0">C</div><div class="key" data-note="D" data-octave="0">D</div><div class="key" data-note="E" data-octave="0">E</div><div class="key" data-note="F" data-octave="0">F</div><div class="key" data-note="G" data-octave="0">G</div><div class="key" data-note="A" data-octave="1">A</div><div class="key" data-note="B" data-octave="1">B</div><div class="key" data-note="C" data-octave="1">C</div><div class="key" data-note="D" data-octave="1">D</div><div class="key" data-note="E" data-octave="1">E</div><div class="key" data-note="F" data-octave="1">F</div><div class="key" data-note="G" data-octave="1">G</div><div class="key" data-note="A" data-octave="2">A</div>
     </div>
-    <div class="controls">
-        <div class="volumes">
-            <label for="oscOneVolume">Osc One Volume: </label>
-            <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscOneVolume">
-            <label for="oscTwoVolume">Osc Two Volume:</label>
-            <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscTwoVolume">
-            <label for="masterVolume">Master Volume:</label>
-            <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="masterVolume">
-        </div>
-        <div class="controls">
-            <label for="oscOneWaveform">Osc One Waveform: </label>
-            <select name="oscOneWaveform">
-                <option value="sine">Sine</option>
-                <option value="square">Square</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="triangle">Triangle</option>
-                <option value="custom">Custom</option>
-            </select>
-            <label for="oscTwoWaveform">Osc Two Waveform: </label>
-            <select name="oscTwoWaveform">
-                <option value="sine">Sine</option>
-                <option value="square">Square</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="triangle">Triangle</option>
-                <option value="custom">Custom</option>
-            </select>
-        </div>
-        <div class="controls">
-            <label for="oscOneRange">Osc One Range: </label>
-            <select name="oscOneRange">
-                <option value="5">2'</option>
-                <option value="4">4'</option>
-                <option value="3">8'</option>
-                <option value="2">16'</option>
-                <option value="1">32'</option>
-                <option value="0">LO'</option>
-            </select>
-            <label for="oscTwoRange">Osc Two Range: </label>
-            <select name="oscTwoRange">
-                <option value="5">2'</option>
-                <option value="4">4'</option>
-                <option value="3">8'</option>
-                <option value="2">16'</option>
-                <option value="1">32'</option>
-                <option value="0">LO'</option>
-            </select>
-        </div>
+</div>
+<div class="controls">
+    <div class="volumes">
+        <label for="oscOneVolume">Osc One Volume: </label>
+        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscOneVolume">
+        <label for="oscTwoVolume">Osc Two Volume:</label>
+        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscTwoVolume">
+        <label for="masterVolume">Master Volume:</label>
+        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="masterVolume">
     </div>
-    <script src="/app.js" defer></script>
+</div>
+<div class="controls">
+    <div class="envelope">
+        <label for="attack">Attack: </label>
+        <input type="range" min="0.01" max="5" step="0.01" list="envelope" name="attack">
+        <label for="release">Release: </label>
+        <input type="range" min="0.01" max="5" step="0.01" list="envelope" name="release">
+        <label for="modulation-depth">Modulation Depth: </label>
+        <input type="range" min="0" max="32" step="0.25" name="modulation-depth">
+        <label for="modulation-rate">Modulation Rate: </label>
+        <input type="range" min="0.01" max="32" step="0.25" name="modulation-rate">
+    </div>
+</div>
+<div class="controls">
+    <label for="oscOneWaveform">Osc One Waveform: </label>
+    <select name="oscOneWaveform">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+        <option value="custom">Custom</option>
+    </select>
+    <label for="oscTwoWaveform">Osc Two Waveform: </label>
+    <select name="oscTwoWaveform">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+        <option value="custom">Custom</option>
+    </select>
+</div>
+<div class="controls">
+    <label for="oscOneRange">Osc One Range: </label>
+    <select name="oscOneRange">
+        <option value="5">2'</option>
+        <option value="4">4'</option>
+        <option value="3">8'</option>
+        <option value="2">16'</option>
+        <option value="1">32'</option>
+        <option value="0">LO'</option>
+    </select>
+    <label for="oscTwoRange">Osc Two Range: </label>
+    <select name="oscTwoRange">
+        <option value="5">2'</option>
+        <option value="4">4'</option>
+        <option value="3">8'</option>
+        <option value="2">16'</option>
+        <option value="1">32'</option>
+        <option value="0">LO'</option>
+    </select>
+</div>
+<script src="/app.js" defer></script>
 </body>
 </html>
