@@ -123,26 +123,38 @@
 
 
 class Oscillator {
-    constructor(context, outDest, freq) {
+    constructor(context, outDest) {
         this.context = context;
         this.outDest = outDest;
-        this.freq = freq;
+        this.range = 4;
+        this.volume = 0.0001;
         this.osc = context.createOscillator();
         this.lvl = context.createGain();
         this.osc.connect(this.lvl);
+        this.lvl.connect(masterVolume);
+        this.lvl.gain.setValueAtTime(this.volume, this.context.currentTime);
         this.osc.start();
-        this.play(freq);
     }
     play(freq) {
-        this.lvl.gain.setValueAtTime(0.001, this.context.currentTime);
-        this.lvl.connect(masterVol);
-        this.lvl.gain.exponentialRampToValueAtTime(0.25, this.context.currentTime + 2);
-        this.osc.frequency.setValueAtTime(440, this.context.currentTime);
-        this.osc.frequency.linearRampToValueAtTime(freq, this.context.currentTime);
+        this.lvl.gain.setValueAtTime(this.lvl.gain.value, this.context.currentTime);
+        this.lvl.gain.cancelScheduledValues(this.context.currentTime + 0.001);
+
+        this.osc.frequency.setValueAtTime(freq, this.context.currentTime);
+        this.osc.frequency.cancelScheduledValues(this.context.currentTime + 0.001);
+
+        this.osc.frequency.linearRampToValueAtTime(freq, this.context.currentTime + 1);
+
+        if(this.volume > 0) {
+            this.lvl.gain.exponentialRampToValueAtTime(this.volume, this.context.currentTime + 0.15);
+        }
     }
     stop() {
-        // this.lvl.gain.cancelScheduledValues(this.context.currentTime);
-        this.lvl.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 2);
+        this.lvl.gain.setValueAtTime(this.lvl.gain.value, this.context.currentTime);
+        this.lvl.gain.cancelScheduledValues(this.context.currentTime + 0.001);
+        this.lvl.gain.exponentialRampToValueAtTime(0.0001, this.context.currentTime + 0.5);
+    }
+    updateWaveform(waveform) {
+        this.osc.type = waveform;
     }
 }
 
@@ -153,45 +165,59 @@ const context = new (window.AudioContext || window.webkitAudioContext)();
 
 
 
-
-const range2  =  { a: 440.00, bb: 466.16, b: 493.88, c: 523.25, db: 554.37, d: 587.33, eb: 622.25, e: 659.25, f: 698.46, gb: 739.99, g: 783.99, ab: 830.61 }
-const range4  = halfFrequencies(range2);
-const range8  = halfFrequencies(range4);
-const range16 = halfFrequencies(range8);
-const range32 = halfFrequencies(range16);
-const rangeLo = halfFrequencies(range32);
-
-
-
-
-const masterVol = context.createGain();
-masterVol.connect(context.destination);
+const ranges = []
+fundamentalOctave = { A: 440.00, Bb: 466.16, B: 493.88, C: 523.25, Db: 554.37, D: 587.33, Eb: 622.25, E: 659.25, F: 698.46, Gb: 739.99, G: 783.99, Ab: 830.61 };
+ranges.unshift(doubleFrequencies(fundamentalOctave));
+ranges.unshift(fundamentalOctave);
+ranges.unshift(halfFrequencies(fundamentalOctave));
+ranges.unshift(halfFrequencies(ranges[0]));
+ranges.unshift(halfFrequencies(ranges[0]));
+ranges.unshift(halfFrequencies(ranges[0]));
+ranges.unshift(halfFrequencies(ranges[0]));
 
 
 
 
-const oscOneVolKnob = document.getElementById('oscOneVol');
-oscOneVolKnob.addEventListener('input', event => {
+const masterVolume = context.createGain();
+masterVolume.connect(context.destination);
+
+
+
+
+const oscOneVolume = document.querySelector('[name="oscOneVolume"]');
+oscOneVolume.addEventListener('input', event => {
     const level = event.target.value;
-    oscOne.lvl.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.1);
+    oscOne.volume = level;
 })
-
-const masterVolKnob = document.getElementById('masterVol');
-masterVolKnob.addEventListener('input', event => {
+const oscTwoVolume = document.querySelector('[name="oscTwoVolume"]');
+oscTwoVolume.addEventListener('input', event => {
     const level = event.target.value;
-    masterVol.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.1);
+    oscTwo.volume = level;
 })
-
-const oscOneRange = document.getElementById('rangeSelect');
+const masterVolumeElement = document.querySelector('[name="masterVolume"]');
+masterVolumeElement.addEventListener('input', event => {
+    const level = event.target.value / 5;
+    masterVolume.gain.exponentialRampToValueAtTime(level, context.currentTime + 0.001);
+})
+const oscOneRange = document.querySelector('[name="oscOneRange"]');
 oscOneRange.addEventListener('input', event => {
-    oscOne.range = 'range' + event.target.value;
-    console.log(oscOne.range);
+    oscOne.range = Number(event.target.value);
+})
+const oscTwoRange = document.querySelector('[name="oscTwoRange"]');
+oscTwoRange.addEventListener('input', event => {
+    oscTwo.range = Number(event.target.value);
+})
+const oscOneWaveform = document.querySelector('[name="oscOneWaveform"]')
+oscOneWaveform.addEventListener('input', event => {
+    oscOne.updateWaveform(event.target.value);
+})
+const oscTwoWaveform = document.querySelector('[name="oscTwoWaveform"]')
+oscTwoWaveform.addEventListener('input', event => {
+    oscTwo.osc.type = event.target.value;
 })
 
-
-
-
-const oscOne = [];
+const oscOne = new Oscillator(context, masterVolume);
+const oscTwo = new Oscillator(context, masterVolume);
 
 
 
@@ -200,27 +226,47 @@ const keys = document.querySelectorAll('[data-note]');
 keys.forEach(key => {
     key.addEventListener('mouseenter', event => {
         const note = event.target.dataset.note;
-        Object.entries(range2).forEach(arr => {
+        const octave = Number(event.target.dataset.octave);
+        Object.entries(ranges[oscOne.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
-                oscOne.unshift(new Oscillator(context, masterVol, freq));
+                oscOne.play(freq);
+            }
+        })
+        console.log(oscTwo.range);
+        Object.entries(ranges[oscTwo.range + octave]).forEach(arr => {
+            if(arr.includes(note)) {
+                const freq = arr[1];
+                oscTwo.play(freq);
             }
         })
     })
     key.addEventListener('mouseout', () => {
-        oscOne[0].stop();
-        oscOne.splice(0);
+        oscOne.stop();
+        oscTwo.stop();
     })
 })
 
 
 
+const a = Array.from(document.querySelectorAll('[data-note="A"]'));
+console.log(keys[7].dataset.note);
 
+
+
+
+function doubleFrequencies(freqObj) {
+    const keysArray = Object.keys(freqObj);
+    const newFreqArray = Object.values(freqObj)
+        .map(x => Number((x*2)
+        .toFixed(2)));
+    return toObject(keysArray, newFreqArray);
+}
 function halfFrequencies(freqObj) {
     const keysArray = Object.keys(freqObj);
     const newFreqArray = Object.values(freqObj)
-        .map(x => (x/2)
-        .toFixed(2));
+        .map(x => Number((x/2)
+        .toFixed(2)));
     return toObject(keysArray, newFreqArray);
 }
 function toObject(keys, values) {
