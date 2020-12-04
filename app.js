@@ -174,8 +174,11 @@ class LFO {
         this.lvl.gain.value = modulationDepthValue;
 
         this.osc.connect(this.lvl);
-        console.log(outputDest);
-        this.lvl.connect(outputDest);
+        
+        outputDest.forEach(destination => {
+            this.lvl.connect(destination);
+        })
+
 
         this.osc.start();
     }
@@ -267,9 +270,7 @@ masterVolume.lvl.connect(context.destination);
 
 const oscOne = new Oscillator(masterVolume.lvl, oscOneVolume.value, oscOneWaveform.value, Number(oscOneRange.value));
 const oscTwo = new Oscillator(masterVolume.lvl, oscTwoVolume.value, oscTwoWaveform.value, Number(oscTwoRange.value));
-
-console.log(oscOne.lvl.gain);
-const lfo = new LFO(oscOne.osc.frequency);
+const lfo = new LFO([oscOne.osc.frequency, oscTwo.osc.frequency]);
 
 
 
@@ -322,6 +323,64 @@ function toObject(keys, values) {
     return newObj;
 }
 
-function envelope() {
 
+
+
+
+
+
+
+
+
+
+
+
+
+//------------Oscilloscope
+const canvasElement = document.querySelector('canvas');
+const canvas = canvasElement.getContext('2d');
+
+function sizeCanvas(width, height) {
+    canvasElement.width = width / 3;
+    canvasElement.height = height / 10;
 }
+
+window.addEventListener('resize', sizeCanvas(window.innerWidth, window.innerHeight));
+
+const oscilloscope = context.createAnalyser();
+masterVolume.lvl.connect(oscilloscope);
+oscilloscope.fftSize = 2048;
+const bufferLength = oscilloscope.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+canvas.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+function draw() {
+    const drawVisual = requestAnimationFrame(draw);
+    oscilloscope.getByteTimeDomainData(dataArray);
+    canvas.fillStyle = 'rgb(200, 200, 200)';
+    canvas.fillRect(0, 0, canvasElement.width, canvasElement.height);
+    canvas.lineWidth = 2;
+    canvas.strokeStyle = 'rgb(0, 0, 0)';
+    canvas.beginPath();
+    
+    const sliceWidth = canvasElement.width * 1.0 / bufferLength;
+    let x = 0;
+    
+    for(i=0; i<bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * canvasElement.height / 2;
+        
+        if(i === 0) {
+            canvas.moveTo(x, y);
+        } else {
+            canvas.lineTo(x, y);
+        }
+        x += sliceWidth
+    }
+    
+    canvas.lineTo(canvasElement.width, canvasElement.height);
+    canvas.stroke();
+};
+
+draw();
