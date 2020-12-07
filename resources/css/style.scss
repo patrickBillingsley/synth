@@ -9,10 +9,433 @@
 body {
     width: 100vw;
     height: 100vh;
+    color: white;
     background-color: hsla(180, 100%, 50%, 0.5);
-    font-family: courier;
+    font-family: sans-serif;
     display: grid;
     place-items: center;
+}
+h2 {
+    margin: 0.5em;
+    font-size: 2rem;
+    justify-self: center;
+}
+label {
+    padding: 0.5em;
+    position: absolute;
+    transform: translateY(-70px);
+    white-space: nowrap;
+    display: grid;
+    justify-items: center;
+}
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100px;
+    background: transparent;
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &::-ms-track {
+        width: 100%;
+        cursor: pointer;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+}
+
+
+
+
+
+.knob {
+    display: grid;
+    place-items: center;
+    position: relative;
+}
+
+.switch {
+    display: grid;
+    place-items: center;
+    position: relative;
+
+    &__label {
+        background-color: black;
+        top: 7px;
+    }
+
+    &--vertical {
+        transform: rotate(-90deg);
+    }
+
+    &::-moz-range-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: silver;
+        border: 1px solid #000000;
+        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        cursor: pointer;
+    }
+
+    &::-moz-range-track {
+        width: 100px;
+        height: 50px;
+        border-radius: 50px;
+        background: #494e52;
+        border: 0.2px solid #010101;
+        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        cursor: pointer;
+    }
+}
+
+
+
+
+.control-surface {
+    background-color: silver;
+    display: flex;
+    position: relative;
+
+    &__label {
+        position: absolute;
+        bottom: 0;
+
+        &--top {
+            justify-self: center;
+            position: absolute;
+            top: 5px;
+        }
+    }
+}
+
+.controllers {
+    width: 350px;
+    height: 600px;
+    padding: 50px 50px 0 25px;
+    background-color: black;
+    display: grid;
+    grid-template-rows: 1fr 2fr 2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        ".                  ."
+        "tune               tune"
+        "glide              mod-mix"
+        "osc-filter-switch  noise-lfo-switch"
+        "label              label";
+    place-items: center;
+    position: relative;
+
+    &__tune {
+        grid-area: tune;
+    }
+
+    &__glide {
+        grid-area: glide;
+    }
+
+    &__mod-mix {
+        grid-area: mod-mix;
+    }
+
+    &__osc-filter-switch {
+        white-space: nowrap;
+        grid-area: osc-filter-switch;
+        position: relative;
+
+        &__label {
+            font-size: 0.75rem;
+            position: absolute;
+            bottom: -32px;
+            left: -15px;
+
+            &--right {
+                left: 50px;
+            }
+        }
+    }
+
+    &__noise-lfo-switch {
+        grid-area: noise-lfo-switch;
+        position: relative;
+
+        &__label {
+            font-size: 0.75rem;
+            position: absolute;
+            bottom: -32px;
+            left: -5px;
+
+            &--right {
+                left: 75px;
+            }
+        }
+    }
+}
+
+.osc-bank {
+    width: 500px;
+    height: 600px;
+    padding: 25px 50px 0 75px;
+    background-color: black;
+    margin-left: 0.15rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 2fr 2fr 2fr 1fr;
+    grid-template-areas:
+        "osc-one-range      osc-one-label        osc-one-waveform"
+        "osc-two-range      osc-two-freq        osc-two-waveform"
+        "osc-three-range    osc-three-freq     osc-three-waveform"
+        "label              label               label";
+    place-items: center;
+    position: relative;
+
+    &__osc-one-range {
+        grid-area: osc-one-range;
+    }
+
+    &__osc-one-waveform {
+        grid-area: osc-one-waveform;
+    }
+
+    &__osc-two-range {
+        grid-area: osc-two-range;
+    }
+
+    &__osc-two-freq {
+        grid-area: osc-two-freq;
+    }
+
+    &__osc-two-waveform {
+        grid-area: osc-two-waveform;
+    }
+
+    &__osc-three-range {
+        grid-area: osc-three-range;
+    }
+
+    &__osc-three-freq {
+        grid-area: osc-three-freq;
+    }
+
+    &__osc-three-waveform {
+        grid-area: osc-three-waveform;
+    }
+
+    &__osc-mod {
+        background-color: black;
+        position: absolute;
+        top: 200px;
+        left: -50px;
+    }
+
+    &__osc-three-control-switch {
+        position: absolute;
+        top: 425px;
+        left: -5px;
+    }
+
+    &__label {
+        display: grid;
+        justify-items: center;
+        align-content: flex-start;
+        position: absolute;
+        bottom: 0;
+
+        &--top {
+            grid-area: osc-one-label;
+            top: 0;
+        }
+    }
+}
+.mixer {
+    width: 600px;
+    height: 600px;
+    padding: 25px 50px 0 50px;
+    background-color: black;
+    margin-left: 0.15rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 2fr) 1fr;
+    grid-template-areas: 
+        "osc-one-vol    switch  ext-input-vol   ."
+        "osc-two-vol    switch  noise-vol       overload"
+        "osc-three-vol  switch  .               white-pink-switch"
+        "label          label   label           label";
+    gap: 1rem;
+    justify-items: center;
+    align-items: center;
+    position: relative;
+
+    &__osc-one-vol {
+        grid-area: osc-one-vol;
+    }
+
+    &__ext-input-vol {
+        grid-area: ext-input-vol;
+        position: relative;
+        bottom: -83px;
+    }
+
+    &__osc-two-vol {
+        grid-area: osc-two-vol;
+    }
+
+    &__noise-vol {
+        grid-area: noise-vol;
+        position: relative;
+        bottom: -83px;
+    }
+
+    &__osc-three-vol {
+        grid-area: osc-three-vol;
+    }
+
+    &__switches {
+        height: 85%;
+        grid-area: switch;
+        display: grid;
+        align-content: space-around;
+    }
+
+    &__overload {
+        grid-area: overload;
+    }
+
+    &__white-pink-switch {
+        height: 100px;
+        display: grid;
+        place-items: center;
+        grid-area: white-pink-switch;
+        position: relative;
+
+        &__white {
+            position: absolute;
+            top: 40px;
+        }
+
+        &__pink {
+            position: absolute;
+            top: 175px;
+        }
+    }
+
+    &__label {
+        position: absolute;
+        bottom: 0;
+    }
+}
+
+.modifiers {
+    width: 500px;
+    height: 600px;
+    margin-left: 0.15rem;
+    display: grid;
+    grid-template-rows: 2fr 1.5fr;
+    gap: 0.15rem;
+
+    &__filter {
+        padding: 25px 0 0 75px;
+        background-color: black;
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        position: relative;
+
+        &__switches {
+            height: 200px;
+            display: grid;
+            align-content: space-between;
+            position: absolute;
+            top: 75px;
+            left: -50px;
+
+        }
+    }
+
+    &__loudness-contour {
+        padding: 25px 0 0 75px;
+        background-color: black;
+        display: grid;
+        grid-template-rows: 3fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        position: relative;
+
+        &__label {
+            position: absolute;
+            top: 5px;
+            justify-self: center;
+        }
+    }
+
+    &__label {
+        position: absolute;
+        bottom: 0;
+    }
+}
+.output {
+    width: 250px;
+    height: 600px;
+    background-color: black;
+    margin-left: 0.15rem;
+    display: grid;
+    align-items: center;
+    position: relative;
+
+    &__label {
+        position: absolute;
+        bottom: 0;
+        justify-self: center;
+    }
+}
+
+.oscillator-modulation {
+    position: absolute;
+    top: 175px;
+    left: 315px;
+    
+    &__label {
+        top: 10px;
+    }
+}
+.oscillator-three-control-switch {
+    position: absolute;
+    left: 10px;
+    bottom: 160px;
+
+    &__label {
+
+    }
+}
+.filter-switches {
+    width: auto;
+    height: 250px;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    justify-items: center;
+    position: absolute;
+    top: 75px;
+    left: 1325px;
+
+    & input {
+        width: 75px;
+    }
+
+    & label {
+        position: absolute;
+
+        &:nth-child(1) {
+            top: -25px;
+        }
+        &:nth-child(4) {
+            top: 143px;
+        }
+    }
 }
 
 .container {

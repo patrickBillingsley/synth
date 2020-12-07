@@ -384,3 +384,12 @@ function draw() {
 };
 
 draw();
+
+
+
+
+
+
+//-------------Knobs
+
+window.inputKnobsOptions = { knobDiameter: '100' };
