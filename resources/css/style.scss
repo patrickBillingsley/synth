@@ -69,7 +69,6 @@ input[type=range] {
 
     &__label {
         background-color: black;
-        top: 7px;
     }
 
     &--vertical {
@@ -102,8 +101,11 @@ input[type=range] {
 
 .control-surface {
     background-color: silver;
-    display: flex;
-    position: relative;
+    display: grid;
+    grid-template-areas: 
+        "controllers    osc-bank    mixer       modifiers   output"
+        "pitch-mod      keyboard    keyboard    keyboard    keyboard";
+    gap: 0.15rem;
 
     &__label {
         position: absolute;
@@ -122,6 +124,7 @@ input[type=range] {
     height: 600px;
     padding: 50px 50px 0 25px;
     background-color: black;
+    grid-area: controllers;
     display: grid;
     grid-template-rows: 1fr 2fr 2fr 1fr 1fr;
     grid-template-columns: 1fr 1fr;
@@ -185,7 +188,7 @@ input[type=range] {
     height: 600px;
     padding: 25px 50px 0 75px;
     background-color: black;
-    margin-left: 0.15rem;
+    grid-area: osc-bank;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 2fr 2fr 2fr 1fr;
@@ -240,6 +243,10 @@ input[type=range] {
         position: absolute;
         top: 425px;
         left: -5px;
+
+        &__label {
+            top: -15px;
+        }
     }
 
     &__label {
@@ -260,7 +267,7 @@ input[type=range] {
     height: 600px;
     padding: 25px 50px 0 50px;
     background-color: black;
-    margin-left: 0.15rem;
+    grid-area: mixer;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 2fr) 1fr;
@@ -336,7 +343,7 @@ input[type=range] {
 .modifiers {
     width: 500px;
     height: 600px;
-    margin-left: 0.15rem;
+    grid-area: modifiers;
     display: grid;
     grid-template-rows: 2fr 1.5fr;
     gap: 0.15rem;
@@ -357,6 +364,20 @@ input[type=range] {
             top: 75px;
             left: -50px;
 
+        }
+
+        &__filter-mod {
+             
+            &__label {
+                top: 7px;
+            }
+        }
+
+        &__key-control {
+
+            &__label {
+                top: 7px;
+            }
         }
     }
 
@@ -384,7 +405,7 @@ input[type=range] {
     width: 250px;
     height: 600px;
     background-color: black;
-    margin-left: 0.15rem;
+    grid-area: output;
     display: grid;
     align-items: center;
     position: relative;
@@ -395,58 +416,92 @@ input[type=range] {
         justify-self: center;
     }
 }
-
-.oscillator-modulation {
-    position: absolute;
-    top: 175px;
-    left: 315px;
-    
-    &__label {
-        top: 10px;
-    }
-}
-.oscillator-three-control-switch {
-    position: absolute;
-    left: 10px;
-    bottom: 160px;
-
-    &__label {
-
-    }
-}
-.filter-switches {
-    width: auto;
-    height: 250px;
+.pitch-mod {
+    width: 350px;
+    height: 600px;
+    background-color: black;
+    grid-area: pitch-mod;
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
-    justify-items: center;
-    position: absolute;
-    top: 75px;
-    left: 1325px;
+    grid-template-rows: 1fr 2fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "lfo-rate   switches"
+        ".          pitch-mod";
 
-    & input {
-        width: 75px;
+    &__lfo-rate {
+        grid-area: lfo-rate;
     }
 
-    & label {
-        position: absolute;
+    &__switches {
+        display: grid;
+        justify-content: center;
+        align-content: space-around;
+        grid-area: switches;
+    }
 
-        &:nth-child(1) {
-            top: -25px;
+    &__glide-switch {
+        display: grid;
+        justify-items: center;
+        position: relative;
+
+        &__label {
+            top: 23px;
         }
-        &:nth-child(4) {
-            top: 143px;
+    }
+
+    &__decay-switch {
+        display: grid;
+        justify-items: center;
+        position: relative;
+
+        &__label {
+            top: 23px;
+        }
+    }
+
+    &__wheels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: space-around;
+        align-content: center;
+        grid-area: pitch-mod;
+    }
+
+    &__pitch-wheel {
+        height: 350px;
+        display: grid;
+        place-content: center;
+        overflow: hidden;
+
+        &__label {
+            justify-self: center;
+            position: absolute;
+            bottom: 0;
+        }
+    }
+    
+    &__mod-wheel {
+        height: 350px;
+        display: grid;
+        place-content: center;
+        overflow: hidden;
+
+        &__label {
+            justify-self: center;
+            position: absolute;
+            bottom: 0;
         }
     }
 }
 
 .container {
-    width: 90vw;
-    height: 60vh;
+    width: 100%;
+    height: 600px;
     background-color: darkslategray;
     white-space: nowrap;
     overflow: scroll;
     scrollbar-width: none;
+    grid-area: keyboard;
 }
 .octave {
     display: inline-block;
@@ -457,4 +512,20 @@ input[type=range] {
     margin: 0 3px 0 0;
     background-color: ivory;
     display: inline-block;
+}
+
+
+
+#pitch-wheel {
+    width: 300px;
+    height: 50px;
+    background-color: tan;
+    transform: rotate(-90deg);
+}
+
+#mod-wheel {
+    width: 300px;
+    height: 50px;
+    background-color: tan;
+    transform: rotate(-90deg);
 }

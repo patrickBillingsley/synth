@@ -248,3 +248,125 @@ function noteReleased(event) {
 function changeVolume(event) {
     masterGainNode.gain.value = volumeControl.value;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// class Oscillator {
+//     constructor(context) {
+//         this.context = context;
+//         this.now = this.context.currentTime;
+//         this.oscillator = this.context.createOscillator();
+//         this.setRange(range);
+//     }
+//     init() {
+//         this.gainNode.gain.value = 0.25;
+//         this.oscillator.connect(this.gainNode);
+//         this.oscillator.start();
+//     }
+//     play(frequency) {
+//         this.oscillator.frequency.exponentialRampToValueAtTime(frequency, this.now);
+//         this.gainNode.connect(this.context.destination);
+//     }
+//     stop() {
+//         this.gainNode.gain.exponentialRampToValueAtTime(0.001, this.now + 1);
+//         this.gainNode.disconnect(this.context.destination);
+//         this.gainNode.gain.setValueAtTime(this.volume, this.now + 1.1);
+//     }
+//     setRange(range) {
+//         this.range = range;
+//     }
+// }
+// class Lfo extends Oscillator {
+//     constructor(context, now) {
+//         super(context, now);
+//         this.oscillator.frequency.value = 5;
+//     }
+// }
+// class Vibrato extends Lfo {
+//     constructor(context, now, osc) {
+//         super(context, now);
+//         this.gainNode.gain.value = 20;
+//         this.gainNode.connect(osc.oscillator.frequency);
+//     }
+// }
+// class Tremolo extends Lfo {
+//     constructor(context, now, osc) {
+//         super(context, now);
+//         this.gainNode.gain.value = 0.15;
+//         this.gainNode.connect(osc.gainNode.gain);
+//     }
+// }
+
+// const context = new (window.AudioContext || window.webkitAudioContext)();
+
+// const keys = document.querySelectorAll('[data-note]');
+
+// const range2 =  { c:  261.63, db: 277.18, d:  293.66, eb: 311.13, e:  329.63, f: 349.23, 
+//                   gb: 369.99, g:  392.00, ab: 415.30, a:  440.00, bb: 466.16, b: 493.88 }
+// const range4 = halfFrequencies(range2);
+// const range8 = halfFrequencies(range4);
+// const range16 = halfFrequencies(range8);
+// const range32 = halfFrequencies(range16);
+// const rangeLo = halfFrequencies(range32);
+
+// function halfFrequencies(freqObj) {
+//     const keysArray = Object.keys(freqObj);
+//     const newFreqArray = Object.values(freqObj)
+//         .map(x => (x/2)
+//         .toFixed(2));
+//     return toObject(keysArray, newFreqArray);
+// }
+// function toObject(keys, values) {
+//     const newObj = {};
+//     for(let i = 0; i < keys.length; i++) {
+//         newObj[keys[i]] = values[i];
+//     }
+//     return newObj;
+// }
+
+// const oscillatorOneVolume = document.getElementById('oscillatorOneVolume');
+// const context = new (window.AudioContext || window.webkitAudioContext)();
+// const vibratoDepth = document.getElementById('vibratoDepth');
+// const vibratoFrequency = document.getElementById('vibratoFrequency');
+
+// const oscillatorOne = new Oscillator(context, range2);
+
+// keys.forEach(key => {
+//     key.addEventListener('mousedown', event => {
+//         const frequency = notes[event.target.dataset.note];
+//         oscillatorOne.play(frequency);
+//         oscillatorTwo.play(frequency);
+//     })
+//     key.addEventListener('mouseup', () => {
+//         oscillatorOne.stop();
+//         oscillatorTwo.stop();
+//     })
+// })
+
+// oscillatorOneVolume.addEventListener('input', event => {
+//     const value = event.target.value;
+//     oscillatorOne.gainNode.gain.setValueAtTime(value/100, now);
+// })
+// oscillatorTwoVolume.addEventListener('input', event => {
+//     const value = event.target.value;
+//     oscillatorTwo.gainNode.gain.setValueAtTime(value/100, now);
+// })
+// vibratoDepth.addEventListener('input', event => {
+//     const value = event.target.value;
+//     vibrato.gainNode.gain.setValueAtTime(value, now);
+// })
+// vibratoFrequency.addEventListener('input', event => {
+//     const value = event.target.value;
+//     vibrato.oscillator.frequency.setValueAtTime(value/10, now);
+// })
