@@ -7,6 +7,10 @@
           box-sizing: border-box;
 }
 
+:root {
+  font-size: 12px;
+}
+
 body {
   width: 100vw;
   height: 100vh;
@@ -26,10 +30,9 @@ h2 {
 }
 
 label {
-  padding: 0.5em;
   position: absolute;
-  -webkit-transform: translateY(-70px);
-          transform: translateY(-70px);
+  -webkit-transform: translateY(-58px);
+          transform: translateY(-58px);
   white-space: nowrap;
   display: -ms-grid;
   display: grid;

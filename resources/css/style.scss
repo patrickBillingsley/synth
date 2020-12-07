@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+:root {
+    font-size: 12px;
+}
+
 body {
     width: 100vw;
     height: 100vh;
@@ -21,9 +25,8 @@ h2 {
     justify-self: center;
 }
 label {
-    padding: 0.5em;
     position: absolute;
-    transform: translateY(-70px);
+    transform: translateY(-58px);
     white-space: nowrap;
     display: grid;
     justify-items: center;
@@ -49,7 +52,6 @@ input[type=range] {
         color: transparent;
     }
 }
-
 
 
 

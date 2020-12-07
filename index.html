@@ -26,12 +26,12 @@
             <input class="input-knob" type="range" min="0" max="10" step="0.1" value="0" name="mod-mix" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
         <div class="controllers__osc-filter-switch">
-            <input class="switch" type="range" min="0" max="1" step="1">
+            <input class="switch" type="range" min="0" max="1" step="1" name="osc-filter-switch">
             <span class="controllers__osc-filter-switch__label">OSC. 3</span>
             <span class="controllers__osc-filter-switch__label controllers__osc-filter-switch__label--right">FILTER EG</span>
         </div>
         <div class="controllers__noise-lfo-switch">
-            <input class="switch" type="range" min="0" max="1" step="1">
+            <input class="switch" type="range" min="0" max="1" step="1" name="noise-lfo-switch">
             <span class="controllers__noise-lfo-switch__label">NOISE</span>
             <span class="controllers__noise-lfo-switch__label controllers__noise-lfo-switch__label--right">LFO</span>
         </div>
@@ -58,7 +58,7 @@
             <input class="input-knob" type="range" min="1" max="6" step="0.025" name="osc-two-waveform" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
         <div class="osc-bank__osc-three-range knob">
-            <input type="range" min="1" max="6" step="0.025" name="osc-three-range" class="input-knob" data-src="resources/images/knobs/range.png" data-sprites="5">
+            <input class="input-knob" type="range" min="1" max="6" step="0.025" name="osc-three-range" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
         <div class="osc-bank__osc-three-freq knob">
             <label class="knob__label" for="osc-three-freq"><h3>OSCILLATOR-3</h3></label>
@@ -80,7 +80,7 @@
                 <span>OSC. 3</span>
                 <span>CONTROL</span>
             </label>
-            <input class="switch switch--vertical" type="range" name="osc-3-control" min="0" max="1" step="1">
+            <input class="switch switch--vertical" type="range" name="osc-three-control" min="0" max="1" step="1">
         </div>
         <div class="osc-bank__label osc-bank__label--top">
             <h3>OSCILLATOR-1</h3>
@@ -114,17 +114,17 @@
         </div>
 
         <div class="mixer__switches">
-            <input class="switch" type="range" min="0" max="1" step="1" data-name="osc-one-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" data-name="ext-input-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" data-name="osc-two-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" data-name="noise-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" data-name="osc-three-switch">
+            <input class="switch" type="range" min="0" max="1" step="1" name="osc-one-switch">
+            <input class="switch" type="range" min="0" max="1" step="1" name="ext-input-switch">
+            <input class="switch" type="range" min="0" max="1" step="1" name="osc-two-switch">
+            <input class="switch" type="range" min="0" max="1" step="1" name="noise-switch">
+            <input class="switch" type="range" min="0" max="1" step="1" name="osc-three-switch">
         </div>
 
         <div class="mixer__overload">OVERLOAD</div>
         <div class="mixer__white-pink-switch">
             <label class="mixer__white-pink-switch__white" for="white-pink">WHITE</label>
-            <input class="switch switch--vertical" type="range" min="0" max="1" step="1">
+            <input class="switch switch--vertical" type="range" min="0" max="1" step="1" name="white-pink-switch">
             <label class="mixer__white-pink-switch__pink" for="white-pink">PINK</label>
         </div>
 
@@ -170,17 +170,17 @@
                         <span>FILTER</span>
                         <span>MODULATION</span>
                     </label>
-                    <input class="switch" type="range" name="filter-mod" min="0" max="1" step="1">
+                    <input class="switch" type="range" min="0" max="1" step="1" name="filter-mod">
                 </div>
         
-                <input class="switch" type="range" name="key-control-one" min="0" max="1" step="1">
+                <input class="switch" type="range" min="0" max="1" step="1" name="key-control-one">
                 
                 <div class="switch">
                     <label class="switch__label" for="key-control-two">
                         <span>KEYBOARD</span>
                         <span>CONTROL</span>
                     </label>
-                    <input class="switch" type="range" name="key-control-two" min="0" max="1" step="1">
+                    <input class="switch" type="range" min="0" max="1" step="1" name="key-control-two">
                 </div>
             </div>
         </div>
