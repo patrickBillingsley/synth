@@ -1,29 +1,9 @@
 class Oscillator {
-    constructor(outDest, vol, freq, range, waveform) {
+    constructor(outDest, vol, freq, range, position) {
         this.outDest = outDest;
         this.range = Number(range);
         this.freq = Number(freq);
-        this.waveform = (function() {
-            if(waveform == 1) {
-                return 'sine';
-            }
-            if(waveform == 2) {
-                return 'sawtooth';
-            }
-            if(waveform == 3) {
-                return 'square';
-            }
-            if(waveform == 4) {
-                return 'triangle';
-            }
-            if(waveform == 5) {
-                return 'sawtooth';
-            }
-            if(waveform == 6) {
-                return 'custom';
-            }
-        })();
-        console.log(this.waveform);
+        this.waveform = selectWaveform(position);
 
         this.osc = context.createOscillator();
         this.osc.type = this.waveform;
@@ -106,10 +86,11 @@ ranges.unshift(halfFrequencies(ranges[0]));
 
 //------------  CONTROLLERS --------------
 
-const oscOneFreq = document.querySelector('[name="osc-one-freq"]');
-oscOneFreq.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscOneFreq = ' + value);
+const oscOneFreqElem = document.querySelector('[name="osc-one-freq"]');
+let oscOneFreq = Number(oscOneFreqElem.value);
+oscOneFreqElem.addEventListener('input', event => {
+    oscOne.freq = oscOneFreq;
+    console.log('oscOne.freq = ' + oscOne.freq);
 })
 
 const glide = document.querySelector('[name="glide"]');
@@ -142,73 +123,62 @@ noiseLfoSwitch.addEventListener('input', event => {
 //------------ OSCILLATOR BANK ------------
 
 const oscOneRangeElem = document.querySelector('[name="osc-one-range"]');
-let oscOneRange = Math.round(oscOneRangeElem.value);
+let oscOneRange = Number(oscOneRangeElem.value);
 oscOneRangeElem.addEventListener('input', event => {
-    oscOne.range = Math.round(event.target.value);
+    oscOne.range = Number(event.target.value);
     console.log('oscOne.range = ' + oscOne.range);
 })
 
 const oscOneWaveformElem = document.querySelector('[name="osc-one-waveform"]');
-let oscOneWaveform = Math.round(oscOneWaveformElem.value);
+let oscOneWaveform = Number(oscOneWaveformElem.value);
 oscOneWaveformElem.addEventListener('input', event => {
-    const value = Math.round(event.target.value);
-    if(value == 1) {
-        oscOne.waveform = 'triangle';
-    }
-    if(value == 2) {
-        oscOne.waveform = 'custom';
-    }
-    if(value == 3) {
-        oscOne.waveform = 'sawtooth';
-    }
-    if(value == 4) {
-        oscOne.waveform = 'square';
-    }
-    if(value == 5) {
-        oscOne.waveform = 'custom';
-    }
-    if(value == 6) {
-        oscOne.waveform = 'custom';
-    }
-    console.log('oscOneWaveform = ' + oscOne.waveform);
+    const value = event.target.value;
+    oscOne.waveform = selectWaveform(value);
+    console.log('oscOne.waveform = ' + oscOne.waveform);
 })
 
 const oscTwoRangeElem = document.querySelector('[name="osc-two-range"]');
 let oscTwoRange = Number(oscTwoRangeElem.value);
 oscTwoRangeElem.addEventListener('input', event => {
-    oscTwo.range = Math.round(event.target.value);
-    console.log('oscTwoRange = ' + oscTwo.range);
+    oscTwo.range = Number(event.target.value);
+    console.log('oscTwo.range = ' + oscTwo.range);
 })
 
 const oscTwoFreqElem = document.querySelector('[name="osc-two-freq"]');
 let oscTwoFreq = Number(oscTwoFreqElem.value);
 oscTwoFreqElem.addEventListener('input', event => {
+    oscTwo.freq = event.target.value;
+    console.log('oscTwo.freq = ' + oscTwo.freq);
+})
+
+const oscTwoWaveformElem = document.querySelector('[name="osc-two-waveform"]');
+let oscTwoWaveform = Number(oscOneWaveformElem.value);
+oscTwoWaveformElem.addEventListener('input', event => {
     const value = event.target.value;
-    console.log('oscTwoFreq = ' + value);
+    oscTwo.waveform = selectWaveform(value);
+    console.log('oscTwo.waveform = ' + oscTwo.waveform);
 })
 
-const oscTwoWaveform = document.querySelector('[name="osc-two-waveform"]');
-oscTwoWaveform.addEventListener('input', event => {
-    const value = Math.round(event.target.value);
-    console.log('oscTwoWaveform = ' + value);
+const oscThreeRangeElem = document.querySelector('[name="osc-three-range"]');
+let oscThreeRange = Number(oscThreeRangeElem.value);
+oscThreeRangeElem.addEventListener('input', event => {
+    oscThree.range = Number(event.target.value);
+    console.log('oscThree.range = ' + oscThree.range);
 })
 
-const oscThreeRange = document.querySelector('[name="osc-three-range"]');
-oscThreeRange.addEventListener('input', event => {
-    const value = Math.round(event.target.value);
-    console.log('oscThreeRange = ' + value);
+const oscThreeFreqElem = document.querySelector('[name="osc-three-freq"]');
+let oscThreeFreq = Number(oscThreeFreqElem.value);
+oscThreeFreqElem.addEventListener('input', event => {
+    oscThree.freq = event.target.value;
+    console.log('oscThree.freq = ' + oscThree.freq);
 })
 
-const oscThreeFreq = document.querySelector('[name="osc-three-freq"]');
-oscThreeFreq.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscThreeFreq = ' + value);
-})
-
-const oscThreeWaveform = document.querySelector('[name="osc-three-waveform"]');
-oscThreeWaveform.addEventListener('input', event => {
-    const value = Math.round(event.target.value);
-    console.log('oscThreeWaveform = ' + value);
+const oscThreeWaveformElem = document.querySelector('[name="osc-three-waveform"]');
+let oscThreeWaveform = Number(oscThreeWaveformElem.value);
+oscThreeWaveformElem.addEventListener('input', event => {
+    const value = Number(event.target.value);
+    oscThree.waveform = selectWaveform(value);
+    console.log('oscThree.waveform = ' + oscThree.waveform);
 })
 
 const oscModSwitch = document.querySelector('[name="osc-mod-switch"]');
@@ -231,7 +201,7 @@ oscThreeControlSwitch.addEventListener('input', event => {
 const oscOneVol = document.querySelector('[name="osc-one-vol"]');
 oscOneVol.addEventListener('input', event => {
     const value = event.target.value;
-    // oscOne.lvl.gain.exponentialRampToValueAtTime(value, now);
+    oscOne.lvl.gain.exponentialRampToValueAtTime(value, now);
     console.log('oscOneVol = ' + value);
 })
 
@@ -244,7 +214,7 @@ extInputVol.addEventListener('input', event => {
 const oscTwoVol = document.querySelector('[name="osc-two-vol"]');
 oscTwoVol.addEventListener('input', event => {
     const value = event.target.value;
-    // oscTwo.lvl.gain.exponentialRampToValueAtTime(value, now);
+    oscTwo.lvl.gain.exponentialRampToValueAtTime(value, now);
     console.log('oscTwoVol = ' + value);
 })
 
@@ -257,15 +227,18 @@ noiseVol.addEventListener('input', event => {
 const oscThreeVol = document.querySelector('[name="osc-three-vol"]');
 oscThreeVol.addEventListener('input', event => {
     const value = event.target.value;
-    // oscThree.lvl.gain.exponentialRampToValueAtTime(value, now);
+    oscThree.lvl.gain.exponentialRampToValueAtTime(value, now);
     console.log('oscThreeVol = ' + value);
 })
 
 
+const oscOneSwitch = {
+    elem: document.querySelector('[name="osc-one-switch"]'),
+    value: setValue(this.elem),
+};
 
-
-const oscOneSwitch = document.querySelector('[name="osc-one-switch"]');
-oscOneSwitch.addEventListener('input', event => {
+// const oscOneSwitch = document.querySelector('[name="osc-one-switch"]');
+oscOneSwitch.elem.addEventListener('input', event => {
     const value = event.target.value;
     console.log('oscOneSwitch = ' + value);
 })
@@ -374,8 +347,8 @@ loudnessSustainElem.addEventListener('input', event => {
 const masterVolElem = document.querySelector('[name="output-vol"]');
 masterVolElem.addEventListener('input', event => {
     const value = event.target.value / 5;
-    console.log('masterVol = ' + value);
-    // masterVol.vol = value;
+    masterVol.vol = value;
+    console.log('masterVol.vol = ' + masterVol.vol);
 })
 
 
@@ -391,9 +364,9 @@ masterVol.lvl.connect(context.destination);
 
 //-------------  OSCILLATORS  -------------------
 
-const oscOne = new Oscillator(masterVol.lvl, oscOneVol.value, oscOneWaveform.value, oscOneRange.value);
-const oscTwo = new Oscillator(masterVol.lvl, oscTwoVol.value, oscTwoWaveform.value, oscTwoRange.value);
-const oscThree = new Oscillator(masterVol.lvl, oscThreeVol.value, oscThreeWaveform.value, oscThreeRange.value);
+const oscOne = new Oscillator(masterVol.lvl, oscOneVol.value, oscOneFreq.value, oscOneRange.value, oscOneWaveform.value);
+const oscTwo = new Oscillator(masterVol.lvl, oscTwoVol.value, oscTwoFreq.value, oscTwoRange.value, oscTwoWaveform.value);
+const oscThree = new Oscillator(masterVol.lvl, oscThreeVol.value, oscThreeFreq.value, oscThreeRange.value, oscThreeWaveform.value);
 // const lfo = new LFO([oscOne.osc.frequency, oscTwo.osc.frequency]);
 
 
@@ -406,7 +379,6 @@ keys.forEach(key => {
     key.addEventListener('mouseenter', event => {
         const note = event.target.dataset.note;
         const octave = Number(event.target.dataset.octave);
-        console.log(oscOne.range + octave);
         Object.entries(ranges[oscOne.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
@@ -456,8 +428,56 @@ function toObject(keys, values) {
     }
     return newObj;
 }
+function selectWaveform(position) {
+    if(position == 1) {
+        return 'triangle';
+    }
+    if(position == 2) {
+        return 'sawtooth';
+    }
+    if(position == 3) {
+        return 'square';
+    }
+    if(position == 4) {
+        return 'sine';
+    }
+    if(position == 5) {
+        return 'sawtooth';
+    }
+    if(position == 6) {
+        return 'custom';
+    }
+}
+function setValue(elem) {
+    console.log(elem);
+}
 
 
+
+
+(function setup() {
+    let waveformValue;
+
+    oscOne.range = Number(oscOneRangeElem.value);
+    oscOne.freq = Number(oscOneFreqElem.value);
+    waveformValue = Number(document.querySelector('[name="osc-one-range"]').value);
+    oscOne.waveform = selectWaveform(waveformValue);
+    oscOne.vol = Number(oscOneVol.value);
+    
+    oscTwo.range = Number(oscTwoRangeElem.value);
+    oscTwo.freq = Number(oscTwoFreqElem.value)
+    waveformValue = Number(document.querySelector('[name="osc-two-range"]').value);
+    oscTwo.waveform = selectWaveform(waveformValue);
+    oscTwo.vol = Number(oscTwoVol.value);
+    
+    oscThree.range = Number(oscThreeRangeElem.value);
+    oscThree.freq = Number(oscThreeFreqElem.value)
+    waveformValue = Number(document.querySelector('[name="osc-three-range"]').value);
+    oscThree.waveform = selectWaveform(waveformValue);
+    oscThree.vol = Number(oscThreeVol.value);
+
+    masterVol.vol = Number(masterVolElem.value);
+})();
 
 
 
