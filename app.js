@@ -1,12 +1,19 @@
+//----------  KNOB PROPERTIES  ----------
+
+window.inputKnobsOptions = { knobDiameter: '100' };
+
+
+
+
+//----------  CLASSES  ----------
+
 class Oscillator {
     constructor(outDest, vol, freq, range, position) {
         this.outDest = outDest;
         this.range = Number(range);
         this.freq = Number(freq);
-        this.waveform = selectWaveform(position);
 
         this.osc = context.createOscillator();
-        this.osc.type = this.waveform;
         this.lvl = context.createGain();
         this.lvl.gain.setValueAtTime(vol, now);
         this.osc.connect(this.lvl);
@@ -17,15 +24,12 @@ class Oscillator {
         this.osc.frequency.cancelScheduledValues(now);
         this.osc.frequency.linearRampToValueAtTime(freq, now);
     }
-    updateWaveform(waveform) {
-        this.osc.type = waveform;
-    }
 }
 class MasterVolume {
     constructor() {
         this.lvl = context.createGain();
         this.lvl.gain.value = 0;
-        this.vol = masterVolElem.value / 5;
+        this.vol = outputVolElem.value / 5;
     }
     play() {
         if(this.lvl.gain.value) {
@@ -61,9 +65,56 @@ class LFO {
         this.osc.start();
     }
 }
+class Knob {
+    constructor(elem) {
+        this.elem = elem;
+        this.value = elem.value;
+        this.addListener();
+        this.pushToArray();
+    }
+    addListener() {
+        this.elem.addEventListener('input', event => {
+            this.value = event.target.value;
+            console.log(this.elem.name + ' ' + this.value);
+        })
+    }
+    pushToArray() {
+        knobArray.push(this);
+    }
+}
+class Range extends Knob {
+    constructor(elem) {
+        super(elem);
+        this.waveformArray = ['sine', 'square', 'sawtooth', 'triangle', 'square', 'sine'];
+
+        this.updateWaveform(elem);
+    }
+    updateWaveform() {
+        this.waveform = this.waveformArray[this.value - 1];
+    }
+}
+
+class Switch {
+    constructor(elem) {
+        this.elem = elem;
+        this.value = elem.value;
+        this.addListener();
+        this.pushToArray();
+    }
+    addListener() {
+        this.elem.addEventListener('input', event => {
+            this.value = event.target.value;
+            console.log(this.elem.name + ' ' + this.value);
+        })
+    }
+    pushToArray() {
+        switchArray.push(this);
+    }
+}
 
 
 
+//----------  CONTEXT  ----------
 
 const context = new (window.AudioContext || window.webkitAudioContext)();
 const now = context.currentTime;
@@ -84,277 +135,157 @@ ranges.unshift(halfFrequencies(ranges[0]));
 
 
 
-//------------  CONTROLLERS --------------
+
+//----------  CONTROLS  ----------
+
+const knobArray = [];
+const switchArray = [];
+
+
+
+
+
+//----------  CONTROLLERS  ----------
 
 const oscOneFreqElem = document.querySelector('[name="osc-one-freq"]');
-let oscOneFreq = Number(oscOneFreqElem.value);
-oscOneFreqElem.addEventListener('input', event => {
-    oscOne.freq = oscOneFreq;
-    console.log('oscOne.freq = ' + oscOne.freq);
-})
+const oscOneFreq = new Knob(oscOneFreqElem);
 
-const glide = document.querySelector('[name="glide"]');
-glide.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('glide = ' + value);
-})
+const glideElem = document.querySelector('[name="glide"]');
+const glide = new Knob(glideElem);
 
-const modMix = document.querySelector('[name="mod-mix"]');
-modMix.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('modMix = ' + value);
-})
+const modMixElem = document.querySelector('[name="mod-mix"]');
+const modMix = new Knob(modMixElem);
 
-const oscFilterSwitch = document.querySelector('[name="osc-filter-switch"]');
-oscFilterSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscFilterSwitch = ' + value);
-})
+const oscFilterSwitchElem = document.querySelector('[name="osc-filter-switch"]');
+const oscFilterSwitch = new Switch(oscFilterSwitchElem);
 
-const noiseLfoSwitch = document.querySelector('[name="noise-lfo-switch"]');
-noiseLfoSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('noiseLfoSwitch = ' + value);
-})
+const noiseLfoSwitchElem = document.querySelector('[name="noise-lfo-switch"]');
+const noiseLfoSwitch = new Switch(noiseLfoSwitchElem);
 
 
 
 
-//------------ OSCILLATOR BANK ------------
+//----------  OSCILLATOR BANK  ----------
 
 const oscOneRangeElem = document.querySelector('[name="osc-one-range"]');
-let oscOneRange = Number(oscOneRangeElem.value);
-oscOneRangeElem.addEventListener('input', event => {
-    oscOne.range = Number(event.target.value);
-    console.log('oscOne.range = ' + oscOne.range);
-})
+const oscOneRange = new Range(oscOneRangeElem);
 
 const oscOneWaveformElem = document.querySelector('[name="osc-one-waveform"]');
-let oscOneWaveform = Number(oscOneWaveformElem.value);
-oscOneWaveformElem.addEventListener('input', event => {
-    const value = event.target.value;
-    oscOne.waveform = selectWaveform(value);
-    console.log('oscOne.waveform = ' + oscOne.waveform);
-})
+const oscOneWaveform = new Range(oscOneWaveformElem);
 
 const oscTwoRangeElem = document.querySelector('[name="osc-two-range"]');
-let oscTwoRange = Number(oscTwoRangeElem.value);
-oscTwoRangeElem.addEventListener('input', event => {
-    oscTwo.range = Number(event.target.value);
-    console.log('oscTwo.range = ' + oscTwo.range);
-})
+const oscTwoRange = new Range(oscTwoRangeElem);
 
 const oscTwoFreqElem = document.querySelector('[name="osc-two-freq"]');
-let oscTwoFreq = Number(oscTwoFreqElem.value);
-oscTwoFreqElem.addEventListener('input', event => {
-    oscTwo.freq = event.target.value;
-    console.log('oscTwo.freq = ' + oscTwo.freq);
-})
+const oscTwoFreq = new Knob(oscTwoFreqElem);
 
 const oscTwoWaveformElem = document.querySelector('[name="osc-two-waveform"]');
-let oscTwoWaveform = Number(oscOneWaveformElem.value);
-oscTwoWaveformElem.addEventListener('input', event => {
-    const value = event.target.value;
-    oscTwo.waveform = selectWaveform(value);
-    console.log('oscTwo.waveform = ' + oscTwo.waveform);
-})
+const oscTwoWaveform = new Range(oscTwoWaveformElem);
 
 const oscThreeRangeElem = document.querySelector('[name="osc-three-range"]');
-let oscThreeRange = Number(oscThreeRangeElem.value);
-oscThreeRangeElem.addEventListener('input', event => {
-    oscThree.range = Number(event.target.value);
-    console.log('oscThree.range = ' + oscThree.range);
-})
+const oscThreeRange = new Range(oscThreeRangeElem);
 
 const oscThreeFreqElem = document.querySelector('[name="osc-three-freq"]');
-let oscThreeFreq = Number(oscThreeFreqElem.value);
-oscThreeFreqElem.addEventListener('input', event => {
-    oscThree.freq = event.target.value;
-    console.log('oscThree.freq = ' + oscThree.freq);
-})
+const oscThreeFreq = new Knob(oscThreeFreqElem);
 
 const oscThreeWaveformElem = document.querySelector('[name="osc-three-waveform"]');
-let oscThreeWaveform = Number(oscThreeWaveformElem.value);
-oscThreeWaveformElem.addEventListener('input', event => {
-    const value = Number(event.target.value);
-    oscThree.waveform = selectWaveform(value);
-    console.log('oscThree.waveform = ' + oscThree.waveform);
-})
+const oscThreeWaveform = new Range(oscThreeWaveformElem);
 
-const oscModSwitch = document.querySelector('[name="osc-mod-switch"]');
-oscModSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscModSwitch = ' + value);
-})
+const oscModSwitchElem = document.querySelector('[name="osc-mod-switch"]');
+const oscModSwitch = new Switch(oscModSwitchElem);
 
-const oscThreeControlSwitch = document.querySelector('[name="osc-three-control-switch"]');
-oscThreeControlSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscThreeControlSwitch = ' + value);
-})
+const oscThreeControlSwitchElem = document.querySelector('[name="osc-three-control-switch"]');
+const oscThreeControlSwitch = new Switch(oscThreeControlSwitchElem);
 
 
 
 
-//------------  MIXER  ---------------
+//----------  MIXER  ----------
 
-const oscOneVol = document.querySelector('[name="osc-one-vol"]');
-oscOneVol.addEventListener('input', event => {
-    const value = event.target.value;
-    oscOne.lvl.gain.exponentialRampToValueAtTime(value, now);
-    console.log('oscOneVol = ' + value);
-})
-
-const extInputVol = document.querySelector('[name="ext-input-vol"]');
-extInputVol.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('extInputVol = ' + value);
-})
-
-const oscTwoVol = document.querySelector('[name="osc-two-vol"]');
-oscTwoVol.addEventListener('input', event => {
-    const value = event.target.value;
-    oscTwo.lvl.gain.exponentialRampToValueAtTime(value, now);
-    console.log('oscTwoVol = ' + value);
-})
-
-const noiseVol = document.querySelector('[name="noise-vol"]');
-noiseVol.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('noiseVol = ' + value);
-})
-
-const oscThreeVol = document.querySelector('[name="osc-three-vol"]');
-oscThreeVol.addEventListener('input', event => {
-    const value = event.target.value;
-    oscThree.lvl.gain.exponentialRampToValueAtTime(value, now);
-    console.log('oscThreeVol = ' + value);
-})
+const oscOneVolElem = document.querySelector('[name="osc-one-vol"]');
+const oscOneVol = new Knob(oscOneVolElem);
 
 
-const oscOneSwitch = {
-    elem: document.querySelector('[name="osc-one-switch"]'),
-    value: setValue(this.elem),
-};
+const extInputVolElem = document.querySelector('[name="ext-input-vol"]');
+const extInputVol = new Knob(extInputVolElem);
 
-// const oscOneSwitch = document.querySelector('[name="osc-one-switch"]');
-oscOneSwitch.elem.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscOneSwitch = ' + value);
-})
+const oscTwoVolElem = document.querySelector('[name="osc-two-vol"]');
+const oscTwoVol = new Knob(oscTwoVolElem);
 
-const extInputSwitch = document.querySelector('[name="ext-input-switch"]');
-extInputSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('extInputSwitch = ' + value);
-})
+const noiseVolElem = document.querySelector('[name="noise-vol"]');
+const noiseVol = new Knob(noiseVolElem);
 
-const oscTwoSwitch = document.querySelector('[name="osc-two-switch"]');
-oscTwoSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscTwoSwitch = ' + value);
-})
-
-const noiseSwitch = document.querySelector('[name="noise-switch"]');
-noiseSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('noiseSwitch = ' + value);
-})
-
-const oscThreeSwitch = document.querySelector('[name="osc-three-switch"]');
-oscThreeSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('oscThreeSwitch = ' + value);
-})
-
-const whitePinkSwitch = document.querySelector('[name="white-pink-switch"]');
-whitePinkSwitch.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('whitePinkSwitch = ' + value);
-})
+const oscThreeVolElem = document.querySelector('[name="osc-three-vol"]');
+const oscThreeVol = new Knob(oscThreeVolElem);
 
 
 
-//---------------  FILTER ----------------
+const oscOneSwitchElem = document.querySelector('[name="osc-one-switch"]');
+const oscOneSwitch = new Switch(oscOneSwitchElem);
 
-const cutoffFreq = document.querySelector('[name="cutoff-freq"]');
-cutoffFreq.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('cutoffFreq = ' + value);
-})
+const extInputSwitchElem = document.querySelector('[name="ext-input-switch"]');
+const extInputSwitch = new Switch(extInputSwitchElem);
 
-const emphasis = document.querySelector('[name="emphasis"]');
-emphasis.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('emphasis = ' + value);
-})
+const oscTwoSwitchElem = document.querySelector('[name="osc-two-switch"]');
+const oscTwoSwitch = new Switch(oscTwoSwitchElem);
 
-const contour = document.querySelector('[name="contour"]');
-contour.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('contour = ' + value);
-})
+const noiseSwitchElem = document.querySelector('[name="noise-switch"]');
+const noiseSwitch = new Switch(noiseSwitchElem);
 
-const filterAttack = document.querySelector('[name="filter-attack"]');
-filterAttack.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('filterAttack = ' + value);
-})
+const oscThreeSwitchElem = document.querySelector('[name="osc-three-switch"]');
+const oscThreeSwitch = new Switch(oscThreeSwitchElem);
 
-const filterDecay = document.querySelector('[name="filter-decay"]');
-filterDecay.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('filterDecay = ' + value);
-})
-
-const filterSustain = document.querySelector('[name="filter-sustain"]');
-filterSustain.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('filterSustain = ' + value);
-})
+const whitePinkSwitchElem = document.querySelector('[name="white-pink-switch"]');
+const whitePinkSwitch = new Switch(whitePinkSwitchElem);
 
 
 
-//---------------  LOUDNESS CONTOUR -------------
+
+//----------  FILTER  ----------
+
+const cutoffFreqElem = document.querySelector('[name="cutoff-freq"]');
+const cutoffFreq = new Knob(cutoffFreqElem);
+
+const emphasisElem = document.querySelector('[name="emphasis"]');
+const emphasis = new Knob(emphasisElem);
+
+const contourElem = document.querySelector('[name="contour"]');
+const contour = new Knob(contourElem);
+
+const filterAttackElem = document.querySelector('[name="filter-attack"]');
+const filterAttack = new Knob(filterAttackElem);
+
+const filterDecayElem = document.querySelector('[name="filter-decay"]');
+const filterDecay = new Knob(filterDecayElem);
+
+const filterSustainElem = document.querySelector('[name="filter-sustain"]');
+const filterSustain = new Knob(filterSustainElem);
+
+
+
+
+//----------  LOUDNESS CONTOUR  ----------
 
 const loudnessAttackElem = document.querySelector('[name="loudness-attack"]');
-let loudnessAttack = Number(loudnessAttackElem.value);
-loudnessAttackElem.addEventListener('input', event => {
-    const value = Number(event.target.value);
-    loudnessAttack = value;
-    console.log('loudnessAttack = ' + loudnessAttack);
-})
+const loudnessAttack = new Knob(loudnessAttackElem);
 
 const loudnessDecayElem = document.querySelector('[name="loudness-decay"]');
-let loudnessDecay = Number(loudnessDecayElem.value);
-loudnessDecayElem.addEventListener('input', event => {
-    const value = Number(event.target.value);
-    loudnessDecay = value;
-    console.log('loudnessDecay = ' + loudnessDecay);
-})
+const loudnessDecay = new Knob(loudnessDecayElem);
 
 const loudnessSustainElem = document.querySelector('[name="loudness-sustain"]');
-let loudnessSustain = Number(loudnessSustainElem.value);
-loudnessSustainElem.addEventListener('input', event => {
-    const value = event.target.value;
-    console.log('loudnessSustain = ' + loudnessSustain);
-})
+const loudnessSustain = new Knob(loudnessSustainElem);
 
 
 
-//----------------  OUTPUT  ----------------
+//----------  OUTPUT  ----------
 
-const masterVolElem = document.querySelector('[name="output-vol"]');
-masterVolElem.addEventListener('input', event => {
-    const value = event.target.value / 5;
-    masterVol.vol = value;
-    console.log('masterVol.vol = ' + masterVol.vol);
-})
+const outputVolElem = document.querySelector('[name="output-vol"]');
+const outputVol = new Knob(outputVolElem);
 
 
 
 
-//-------------  MASTER SECTION  ----------------
+//----------  MASTER SECTION  ----------
 
 const masterVol = new MasterVolume();
 masterVol.lvl.connect(context.destination);
@@ -362,7 +293,7 @@ masterVol.lvl.connect(context.destination);
 
 
 
-//-------------  OSCILLATORS  -------------------
+//----------  OSCILLATORS  ----------
 
 const oscOne = new Oscillator(masterVol.lvl, oscOneVol.value, oscOneFreq.value, oscOneRange.value, oscOneWaveform.value);
 const oscTwo = new Oscillator(masterVol.lvl, oscTwoVol.value, oscTwoFreq.value, oscTwoRange.value, oscTwoWaveform.value);
@@ -372,33 +303,46 @@ const oscThree = new Oscillator(masterVol.lvl, oscThreeVol.value, oscThreeFreq.v
 
 
 
-//--------------  KEYBOARD  --------------------
+//----------  KEYBOARD  ----------
 
 const keys = document.querySelectorAll('[data-note]');
+
 keys.forEach(key => {
     key.addEventListener('mouseenter', event => {
         const note = event.target.dataset.note;
         const octave = Number(event.target.dataset.octave);
+
+            //----- OSC 1 -----
+
         Object.entries(ranges[oscOne.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
                 oscOne.play(freq);
             }
         })
+        
+            //----- OSC 2 -----
+
         Object.entries(ranges[oscTwo.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
                 oscTwo.play(freq);
             }
         })
+
+            //----- OSC 3 -----
+
         Object.entries(ranges[oscThree.range + octave]).forEach(arr => {
             if(arr.includes(note)) {
                 const freq = arr[1];
                 oscThree.play(freq);
             }
         })
+
         masterVol.play();
+
     })
+
     key.addEventListener('mouseout', () => {
         masterVol.stop();
     })
@@ -406,6 +350,7 @@ keys.forEach(key => {
 
 
 
+//----------  FUNCTIONS  ----------
 
 function doubleFrequencies(freqObj) {
     const keysArray = Object.keys(freqObj);
@@ -421,6 +366,7 @@ function halfFrequencies(freqObj) {
         .toFixed(2)));
     return toObject(keysArray, newFreqArray);
 }
+
 function toObject(keys, values) {
     const newObj = {};
     for(let i = 0; i < keys.length; i++) {
@@ -428,69 +374,40 @@ function toObject(keys, values) {
     }
     return newObj;
 }
-function selectWaveform(position) {
-    if(position == 1) {
-        return 'triangle';
-    }
-    if(position == 2) {
-        return 'sawtooth';
-    }
-    if(position == 3) {
-        return 'square';
-    }
-    if(position == 4) {
-        return 'sine';
-    }
-    if(position == 5) {
-        return 'sawtooth';
-    }
-    if(position == 6) {
-        return 'custom';
-    }
-}
-function setValue(elem) {
-    console.log(elem);
-}
 
 
 
+//----------  INITIALIZATION  ----------
 
 (function setup() {
-    let waveformValue;
+    // let waveformValue;
 
     oscOne.range = Number(oscOneRangeElem.value);
     oscOne.freq = Number(oscOneFreqElem.value);
     waveformValue = Number(document.querySelector('[name="osc-one-range"]').value);
-    oscOne.waveform = selectWaveform(waveformValue);
+    // oscOne.waveform = selectWaveform(waveformValue);
     oscOne.vol = Number(oscOneVol.value);
     
     oscTwo.range = Number(oscTwoRangeElem.value);
     oscTwo.freq = Number(oscTwoFreqElem.value)
     waveformValue = Number(document.querySelector('[name="osc-two-range"]').value);
-    oscTwo.waveform = selectWaveform(waveformValue);
+    // oscTwo.waveform = selectWaveform(waveformValue);
     oscTwo.vol = Number(oscTwoVol.value);
     
     oscThree.range = Number(oscThreeRangeElem.value);
     oscThree.freq = Number(oscThreeFreqElem.value)
     waveformValue = Number(document.querySelector('[name="osc-three-range"]').value);
-    oscThree.waveform = selectWaveform(waveformValue);
+    // oscThree.waveform = selectWaveform(waveformValue);
     oscThree.vol = Number(oscThreeVol.value);
 
-    masterVol.vol = Number(masterVolElem.value);
+    masterVol.vol = Number(outputVolElem.value);
 })();
 
 
 
 
+//----------  Oscilloscope  ----------
 
-
-
-
-
-
-
-
-//------------Oscilloscope
 // const canvasElement = document.querySelector('canvas');
 // const canvas = canvasElement.getContext('2d');
 
@@ -538,12 +455,3 @@ function setValue(elem) {
 // };
 
 // draw();
-
-
-
-
-
-
-//-------------Knobs
-
-window.inputKnobsOptions = { knobDiameter: '100' };
