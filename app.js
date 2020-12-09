@@ -394,6 +394,45 @@ knobArray.forEach(knob => {
     }
 })
 
+switchArray.forEach(control => {
+
+    if(control.slave == oscOne) {
+
+        control.elem.addEventListener('input', event => {
+            let value = event.target.value;
+            if(value == 1) {
+                gainOne.lvl.connect(master.lvl);
+            } else {
+                gainOne.lvl.disconnect(master.lvl);
+            }
+        })
+    }
+
+    if(control.slave == oscTwo) {
+
+        control.elem.addEventListener('input', event => {
+            let value = event.target.value;
+            if(value == 1) {
+                gainTwo.lvl.connect(master.lvl);
+            } else {
+                gainTwo.lvl.disconnect(master.lvl);
+            }
+        })
+    }
+
+    if(control.slave == oscThree) {
+
+        control.elem.addEventListener('input', event => {
+            let value = event.target.value;
+            if(value == 1) {
+                gainThree.lvl.connect(master.lvl);
+            } else {
+                gainThree.lvl.disconnect(master.lvl);
+            }
+        })
+    }
+})
+
 
 
 
