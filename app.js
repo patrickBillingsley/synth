@@ -9,27 +9,34 @@ window.inputKnobsOptions = { knobDiameter: '100' };
 
 class Oscillator {
     constructor() {
+        this.range;
+
         this.osc = context.createOscillator();
         this.osc.start();
+
         oscArray.push(this.osc);
     }
     play(note, octave) {
-        Object.entries(rangeArray).forEach(arr => {
+        Object.entries(fundamentalOctave).forEach(arr => {
             if(arr.includes(note)) {
-                let freq = arr[1] * octave;
+                let multiplier = Number(this.range) + Number(octave);
+                let freq = arr[1];
+                for(i=0; i<multiplier; i++) {
+                    freq = freq * 2;
+                }
                 this.osc.frequency.cancelScheduledValues(context.currentTime);
-                this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + parseFloat(controllers.glide.value));
+                this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + 0.01);
             }
         })
-    }
-    updateOsc(parameter, value) {
-        parameter = value;
     }
 }
 class Gain {
     constructor() {
+        this.vol;
+
         this.lvl = context.createGain();
         this.lvl.gain.value = 0;
+
         gainArray.push(this.lvl);
     }
     play() {
@@ -39,14 +46,14 @@ class Gain {
         } else {
             this.lvl.gain.setValueAtTime(0.001, context.currentTime);
         }
-        this.lvl.gain.exponentialRampToValueAtTime(1, context.currentTime + 0.001 + loudness.attack.value);
+        this.lvl.gain.exponentialRampToValueAtTime(this.vol, context.currentTime + 0.5);
     }
     stop() {
         if(this.lvl.gain.value) {
             this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
             this.lvl.gain.cancelScheduledValues(context.currentTime + 0.001);
-            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime);
-            this.lvl.gain.setValueAtTime(0, context.currentTime);
+            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
+            this.lvl.gain.setValueAtTime(0, context.currentTime + 0.501);
         }
     }
 }
@@ -68,10 +75,10 @@ class Range extends Knob {
         super(elem, slave, property);
         this.waveformArray = ['sine', 'square', 'sawtooth', 'triangle', 'square', 'sine'];
 
-        this.updateWaveform(elem);
+        this.selectWaveform();
     }
-    updateWaveform() {
-        this.waveform = this.waveformArray[this.value - 1];
+    selectWaveform() {
+        return this.waveformArray[this.value - 1];
     }
 }
 
@@ -101,15 +108,7 @@ class Switch {
 
 const context = new (window.AudioContext || window.webkitAudioContext)();
 
-
-const rangeArray = []
-
 fundamentalOctave = { A: 13.75, Bb: 14.57, B: 15.43, C: 16.35, Db: 17.32, D: 18.36, Eb: 19.45, E: 20.6, F: 21.83, Gb: 23.13, G: 24.5, Ab: 23.13 };
-rangeArray.push(fundamentalOctave);
-
-for(i=0; i<7; i++) {
-    rangeArray.push(doubleFrequencies(rangeArray[i]));
-}
 
 
 
@@ -306,18 +305,91 @@ const loudness = {
 const outputVolElem = document.querySelector('[name="output-vol"]');
 
 const output = {
-    outputVol: new Knob(outputVolElem, 'output', 'vol')
+    outputVol: new Knob(outputVolElem, 'master', 'vol')
 }
 
 //----------  CONTROL CONNECTIONS  ----------
 
 knobArray.forEach(knob => {
+
     if(knob.slave == oscOne) {
+
+        if(knob.property == 'range') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscOne.range = knob.value;
+                console.log(oscOne.range);
+            })
+        }
+
+        if(knob.property == 'waveform') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscOne.osc.type = knob.selectWaveform();
+            })
+        }
+
+        if(knob.property == 'vol') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                gainOne.lvl.gain.setValueAtTime(knob.value, context.currentTime);
+            })
+        }
+    }
+
+    if(knob.slave == oscTwo) {
+    
+        if(knob.property == 'range') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscTwo.range = knob.value;
+            })
+        }
+
+        if(knob.property == 'waveform') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscTwo.osc.type = knob.selectWaveform();
+            })
+        }
+
+        if(knob.property == 'vol') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                gainTwo.lvl.gain.setValueAtTime(knob.value, context.currentTime);
+            })
+        }
+    }
+
+    if(knob.slave == oscThree) {
+    
+        if(knob.property == 'range') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscThree.range = knob.value;
+            })
+        }
+
+        if(knob.property == 'waveform') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscThree.osc.type = knob.selectWaveform();
+            })
+        }
+
+        if(knob.property == 'vol') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                gainThree.lvl.gain.setValueAtTime(knob.value, context.currentTime);
+            })
+        }
+    }
+
+    if(knob.slave == 'master') {
         knob.elem.addEventListener('input', event => {
             knob.value = event.target.value;
-            let parameter = 'this.osc.' + knob.property
-            oscOne.updateOsc(parameter, knob.value);
-            console.log(oscOne.osc.range);
+            master.vol = knob.value;
+            console.log(master.vol);
         })
     }
 })
@@ -332,7 +404,7 @@ const keys = document.querySelectorAll('[data-note]');
 keys.forEach(key => {
     key.addEventListener('mouseenter', event => {
         const note = event.target.dataset.note;
-        const octave = Number(event.target.dataset.octave);
+        const octave = event.target.dataset.octave;
 
         oscOne.play(note, octave);
         oscTwo.play(note, octave);
@@ -357,13 +429,6 @@ function doubleFrequencies(freqObj) {
         .toFixed(2)));
     return toObject(keysArray, newFreqArray);
 }
-function halfFrequencies(freqObj) {
-    const keysArray = Object.keys(freqObj);
-    const newFreqArray = Object.values(freqObj)
-        .map(x => Number((x/2)
-        .toFixed(2)));
-    return toObject(keysArray, newFreqArray);
-}
 
 function toObject(keys, values) {
     const newObj = {};
@@ -378,33 +443,30 @@ function toObject(keys, values) {
 
 //----------  INITIALIZATION  ----------
 
-// (function setup() {
+(function setup() {
 
-//     //----- osc 1 -----
+    //----- osc 1 -----
 
-//     oscOne.range = oscBank.oscOneRange.value;
-//     oscOne.freq = controllers.oscOneFreq.value;
-//     oscOne.osc.type = oscBank.oscOneWaveform.waveform;
-//     oscOne.lvl.gain.setValueAtTime(mixer.oscOneVol.value, context.currentTime);
+    oscOne.range = oscBank.oscOneRange.value;
+    oscOne.osc.type = oscBank.oscOneWaveform.waveform;
+    gainOne.lvl.gain.value = mixer.oscOneVol.value;
     
-//     //----- osc 2 -----
+    //----- osc 2 -----
 
-//     oscTwo.range = oscBank.oscTwoRange.value;
-//     oscTwo.freq = oscBank.oscTwoFreq.value;
-//     oscTwo.osc.type = oscBank.oscTwoWaveform.waveform;
-//     oscTwo.lvl.gain.setValueAtTime(mixer.oscTwoVol.value, context.currentTime);
+    oscTwo.range = oscBank.oscTwoRange.value;
+    oscTwo.osc.type = oscBank.oscTwoWaveform.waveform;
+    gainTwo.lvl.gain.value = mixer.oscTwoVol.value;
     
-//     //----- osc 3 -----
+    // //----- osc 3 -----
 
-//     oscThree.range = oscBank.oscThreeRange.value;
-//     oscThree.freq = oscBank.oscThreeFreq.value;
-//     oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
-//     oscThree.lvl.gain.setValueAtTime(mixer.oscThreeVol.value, context.currentTime);
+    oscThree.range = oscBank.oscThreeRange.value;
+    oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
+    gainThree.lvl.gain.value = mixer.oscThreeVol.value;
 
-//     //----- master -----
+    //----- master -----
 
-//     master.vol = master.vol.value;
-// })();
+    master.vol = output.outputVol.elem.value;
+})();
 
 
 
