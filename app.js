@@ -1,3 +1,5 @@
+const delay = 0.001;
+
 //----------  KNOB PROPERTIES  ----------
 
 window.inputKnobsOptions = { knobDiameter: '100' };
@@ -25,7 +27,7 @@ class Oscillator {
                     freq = freq * 2;
                 }
                 this.osc.frequency.cancelScheduledValues(context.currentTime);
-                this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + 0.01);
+                this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay);
             }
         })
     }
@@ -42,18 +44,22 @@ class Gain {
     play() {
         if(this.lvl.gain.value) {
             this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
-            this.lvl.gain.cancelScheduledValues(context.currentTime + 0.001);
+            this.lvl.gain.cancelScheduledValues(context.currentTime + delay);
         } else {
             this.lvl.gain.setValueAtTime(0.001, context.currentTime);
         }
-        this.lvl.gain.exponentialRampToValueAtTime(this.vol, context.currentTime + 0.5);
+        this.lvl.gain.exponentialRampToValueAtTime(this.vol, context.currentTime + parseFloat(this.attack));
+        
+        let sustainVol = this.vol * this.sustain;
+        
+        this.lvl.gain.exponentialRampToValueAtTime(sustainVol, context.currentTime + (this.attack * 2));
     }
     stop() {
         if(this.lvl.gain.value) {
             this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
-            this.lvl.gain.cancelScheduledValues(context.currentTime + 0.001);
-            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
-            this.lvl.gain.setValueAtTime(0, context.currentTime + 0.501);
+            this.lvl.gain.cancelScheduledValues(context.currentTime + delay);
+            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime + parseFloat(this.decay) + delay);
+            this.lvl.gain.setValueAtTime(0, context.currentTime + parseFloat(this.decay) + delay);
         }
     }
 }
@@ -292,9 +298,9 @@ const loudnessDecayElem = document.querySelector('[name="loudness-decay"]');
 const loudnessSustainElem = document.querySelector('[name="loudness-sustain"]');
 
 const loudness = {
-    attack: new Knob(loudnessAttackElem),
-    decay: new Knob(loudnessDecayElem),
-    sustain: new Knob(loudnessSustainElem)
+    attack: new Knob(loudnessAttackElem, master, 'attack'),
+    decay: new Knob(loudnessDecayElem, master, 'decay'),
+    sustain: new Knob(loudnessSustainElem, master, 'sustain')
 };
 
 
@@ -305,7 +311,7 @@ const loudness = {
 const outputVolElem = document.querySelector('[name="output-vol"]');
 
 const output = {
-    outputVol: new Knob(outputVolElem, 'master', 'vol')
+    outputVol: new Knob(outputVolElem, master, 'vol')
 }
 
 //----------  CONTROL CONNECTIONS  ----------
@@ -385,12 +391,35 @@ knobArray.forEach(knob => {
         }
     }
 
-    if(knob.slave == 'master') {
-        knob.elem.addEventListener('input', event => {
-            knob.value = event.target.value;
-            master.vol = knob.value;
-            console.log(master.vol);
-        })
+    if(knob.slave == master) {
+
+        if(knob.property == 'vol') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                master.vol = knob.value;
+            })
+        }
+
+        if(knob.property == 'attack') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                master.attack = knob.value;
+            })
+        }
+
+        if(knob.property == 'decay') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                master.decay = knob.value;
+            })
+        }
+
+        if(knob.property == 'sustain') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                master.sustain = knob.value;
+            })
+        }
     }
 })
 
@@ -496,7 +525,7 @@ function toObject(keys, values) {
     oscTwo.osc.type = oscBank.oscTwoWaveform.waveform;
     gainTwo.lvl.gain.value = mixer.oscTwoVol.value;
     
-    // //----- osc 3 -----
+    //----- osc 3 -----
 
     oscThree.range = oscBank.oscThreeRange.value;
     oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
@@ -505,6 +534,9 @@ function toObject(keys, values) {
     //----- master -----
 
     master.vol = output.outputVol.elem.value;
+    master.attack = loudness.attack.value;
+    master.decay = loudness.decay.value;
+    master.sustain = loudness.sustain.value;
 })();
 
 
