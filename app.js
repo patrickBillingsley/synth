@@ -27,7 +27,12 @@ class Oscillator {
                     freq = freq * 2;
                 }
                 this.osc.frequency.cancelScheduledValues(context.currentTime);
-                this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay);
+
+                if(this.glideOn) {
+                    this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay + parseFloat(this.glideTime));
+                } else {
+                    this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay);
+                }
             }
         })
     }
@@ -42,6 +47,7 @@ class Gain {
         gainArray.push(this.lvl);
     }
     play() {
+
         if(this.lvl.gain.value) {
             this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
             this.lvl.gain.cancelScheduledValues(context.currentTime + delay);
@@ -183,7 +189,7 @@ const noiseLfoSwitchElem = document.querySelector('[name="noise-lfo-switch"]');
 
 const controllers = {
     oscOneFreq: new Knob(oscOneFreqElem, 'oscOne', 'freq'),
-    glide: new Knob(glideElem, ['oscOne', 'oscTwo', 'oscThree'], 'glide'),
+    glide: new Knob(glideElem, 'glide', 'time'),
     modMix: new Knob(modMixElem),
     oscFilterSwitch: new Switch(oscFilterSwitchElem),
     noiseLfoSwitch: new Switch(noiseLfoSwitchElem)
@@ -314,6 +320,23 @@ const output = {
     outputVol: new Knob(outputVolElem, 'master', 'vol')
 }
 
+
+
+//----------  PITCH MOD  ----------
+
+const lfoRateElem = document.querySelector('[name="lfo-rate"]');
+const glideSwitchElem = document.querySelector('[name="glide-switch"]');
+const decaySwitchElem = document.querySelector('[name="decay-switch"]');
+
+const pitchMod = {
+    lfoRate: new Knob(lfoRateElem, 'lfo', 'rate'),
+    glideSwitch: new Switch(glideSwitchElem, 'glide', 'on'),
+    decaySwitch: new Switch(decaySwitchElem)
+}
+
+
+
+
 //----------  CONTROL CONNECTIONS  ----------
 
 knobArray.forEach(knob => {
@@ -421,11 +444,23 @@ knobArray.forEach(knob => {
             })
         }
     }
+
+    if(knob.slave == 'glide') {
+
+        if(knob.property == 'time') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                oscOne.glideTime = knob.value;
+                oscTwo.glideTime = knob.value;
+                oscThree.glideTime = knob.value;
+            })
+        }
+    }
 })
 
 switchArray.forEach(control => {
 
-    if(control.slave == oscOne) {
+    if(control.slave == 'oscOne') {
 
         control.elem.addEventListener('input', event => {
             let value = event.target.value;
@@ -437,7 +472,7 @@ switchArray.forEach(control => {
         })
     }
 
-    if(control.slave == oscTwo) {
+    if(control.slave == 'oscTwo') {
 
         control.elem.addEventListener('input', event => {
             let value = event.target.value;
@@ -449,7 +484,7 @@ switchArray.forEach(control => {
         })
     }
 
-    if(control.slave == oscThree) {
+    if(control.slave == 'oscThree') {
 
         control.elem.addEventListener('input', event => {
             let value = event.target.value;
@@ -457,6 +492,22 @@ switchArray.forEach(control => {
                 gainThree.lvl.connect(master.lvl);
             } else {
                 gainThree.lvl.disconnect(master.lvl);
+            }
+        })
+    }
+
+    if(control.slave == 'glide') {
+
+        control.elem.addEventListener('input', event => {
+            let value = event.target.value;
+            if(value == 1) {
+                oscOne.glideOn = true;
+                oscTwo.glideOn = true;
+                oscThree.glideOn = true;
+            } else {
+                oscOne.glideOn = false;
+                oscTwo.glideOn = false;
+                oscThree.glideOn = false;
             }
         })
     }
@@ -518,18 +569,27 @@ function toObject(keys, values) {
     oscOne.range = oscBank.oscOneRange.value;
     oscOne.osc.type = oscBank.oscOneWaveform.waveform;
     gainOne.lvl.gain.value = mixer.oscOneVol.value;
+
+    oscOne.glideTime = controllers.glide.value;
+    oscOne.glideOn = pitchMod.glideSwitch.value;
     
     //----- osc 2 -----
 
     oscTwo.range = oscBank.oscTwoRange.value;
     oscTwo.osc.type = oscBank.oscTwoWaveform.waveform;
     gainTwo.lvl.gain.value = mixer.oscTwoVol.value;
+
+    oscTwo.glideTime = controllers.glide.value;
+    oscTwo.glideOn = pitchMod.glideSwitch.value;
     
     //----- osc 3 -----
 
     oscThree.range = oscBank.oscThreeRange.value;
     oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
     gainThree.lvl.gain.value = mixer.oscThreeVol.value;
+
+    oscThree.glideTime = controllers.glide.value;
+    oscThree.glideOn = pitchMod.glideSwitch.value;
 
     //----- master -----
 
