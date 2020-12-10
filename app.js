@@ -570,8 +570,8 @@ function toObject(keys, values) {
     oscOne.osc.type = oscBank.oscOneWaveform.waveform;
     gainOne.lvl.gain.value = mixer.oscOneVol.value;
 
-    oscOne.glideTime = controllers.glide.value;
-    oscOne.glideOn = pitchMod.glideSwitch.value;
+    oscOne.glideTime = controllers.glide.elem.value;
+    oscOne.glideOn = pitchMod.glideSwitch.elem.value;
     
     //----- osc 2 -----
 
@@ -579,8 +579,8 @@ function toObject(keys, values) {
     oscTwo.osc.type = oscBank.oscTwoWaveform.waveform;
     gainTwo.lvl.gain.value = mixer.oscTwoVol.value;
 
-    oscTwo.glideTime = controllers.glide.value;
-    oscTwo.glideOn = pitchMod.glideSwitch.value;
+    oscTwo.glideTime = controllers.glide.elem.value;
+    oscTwo.glideOn = pitchMod.glideSwitch.elem.value;
     
     //----- osc 3 -----
 
@@ -588,8 +588,8 @@ function toObject(keys, values) {
     oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
     gainThree.lvl.gain.value = mixer.oscThreeVol.value;
 
-    oscThree.glideTime = controllers.glide.value;
-    oscThree.glideOn = pitchMod.glideSwitch.value;
+    oscThree.glideTime = controllers.glide.elem.value;
+    oscThree.glideOn = pitchMod.glideSwitch.elem.value;
 
     //----- master -----
 
