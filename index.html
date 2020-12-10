@@ -14,31 +14,29 @@
 
     <div class="controllers">
 
-        <div class="controllers__tune knob">
+        <div class="controllers__tune knob__container">
             <label class="knob__label" for="osc-one-freq">TUNE</label>
             <input class="input-knob" type="range" min="-2.5" max="2.5" step="0.01" value="0" name="osc-one-freq" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="controllers__glide knob">
+        <div class="controllers__glide knob__container">
             <label class="knob__label" for="glide">GLIDE</label>
             <input class="input-knob" type="range" min="0" max="2" step="0.01" value="0" name="glide" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="controllers__mod-mix knob">
+        <div class="controllers__mod-mix knob__container">
             <label class="knob__label" for="mod-mix">MODULATION MIX</label>
             <input class="input-knob" type="range" min="0" max="10" step="0.01" value="0" name="mod-mix" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="controllers__osc-filter-switch">
+        <div class="controllers__osc-filter-switch switch__container">
             <input class="switch" type="range" min="0" max="1" step="1" name="osc-filter-switch">
-            <span class="controllers__osc-filter-switch__label">OSC. 3</span>
-            <span class="controllers__osc-filter-switch__label controllers__osc-filter-switch__label--right">FILTER EG</span>
+            <label class="switch__label switch__label--split" for="osc-filter-switch"><span>OSC. 3</span><span>FILTER EG</span></label>
         </div>
 
-        <div class="controllers__noise-lfo-switch">
+        <div class="controllers__noise-lfo-switch switch__container">
             <input class="switch" type="range" min="0" max="1" step="1" name="noise-lfo-switch">
-            <span class="controllers__noise-lfo-switch__label">NOISE</span>
-            <span class="controllers__noise-lfo-switch__label controllers__noise-lfo-switch__label--right">LFO</span>
+            <label class="switch__label switch__label--split" for="noise-lfo-switch"><span>NOISE</span><span>LFO</span></label>
         </div>
 
         <h2 class="control-surface__label">CONTROLLERS</h2>
@@ -47,113 +45,124 @@
     
     <div class="osc-bank">
 
-        <div class="osc-bank__osc-one-range knob">
+        <div class="osc-bank__osc-one-range knob__container">
             <label class="knob__label" for="osc-one-range">RANGE</label>
             <input class="input-knob" type="range" min="1" max="6" step="1" name="osc-one-range" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-one-waveform knob">
+        <div class="osc-bank__osc-one-waveform knob__container">
             <label class="knob__label" for="osc-one-waveform">WAVEFORM</label>
             <input class="input-knob" type="range" min="1" max="6" step="1" value="1" name="osc-one-waveform" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-two-range knob">
+        <div class="osc-bank__osc-two-range knob__container">
             <input class="input-knob" type="range" min="1" max="6" step="1" value="1" name="osc-two-range" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-two-freq knob">
+        <div class="osc-bank__osc-two-freq knob__container">
             <label class="knob__label" for="osc-two-freq"><h3>OSCILLATOR-2</h3></label>
             <input class="input-knob" type="range" min="-8" max="8" step="0.025" name="osc-two-freq" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="osc-bank__osc-two-waveform knob">
+        <div class="osc-bank__osc-two-waveform knob__container">
             <input class="input-knob" type="range" min="1" max="6" step="1" value="1" name="osc-two-waveform" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-three-range knob">
+        <div class="osc-bank__osc-three-range knob__container">
             <input class="input-knob" type="range" min="1" max="6" step="1" value="1" name="osc-three-range" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-three-freq knob">
+        <div class="osc-bank__osc-three-freq knob__container">
             <label class="knob__label" for="osc-three-freq"><h3>OSCILLATOR-3</h3></label>
             <input class="input-knob" type="range" min="-8" max="8" step="0.025" name="osc-three-freq" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="osc-bank__osc-three-waveform knob">
+        <div class="osc-bank__osc-three-waveform knob__container">
             <input class="input-knob" type="range" min="1" max="6" step="1" value="1" name="osc-three-waveform" data-src="resources/images/knobs/range.png" data-sprites="5">
         </div>
 
-        <div class="osc-bank__osc-mod switch">
-            <label class="switch__label" for="osc-mod-switch">
+        <div class="osc-bank__osc-mod switch__container">
+            <label class="switch__label switch__label--two-line" for="osc-mod-switch">
                 <span>OSCILLATOR</span>
                 <span>MODULATION</span>
             </label>
             <input class="switch" type="range" name="osc-mod-switch" min="0" max="1" step="1">
         </div>
 
-        <div class="osc-bank__osc-three-control-switch knob">
-            <label class="osc-bank__osc-three-control-switch__label" for="osc-three-control-switch">
+        <div class="osc-bank__osc-three-control-switch switch__container">
+            <label class="switch__label switch__label--vertical switch__label--vertical--two-line" for="osc-three-control-switch">
                 <span>OSC. 3</span>
                 <span>CONTROL</span>
             </label>
             <input class="switch switch--vertical" type="range" name="osc-three-control-switch" min="0" max="1" step="1">
         </div>
-
-        <div class="osc-bank__label osc-bank__label--top">
-            <h3>OSCILLATOR-1</h3>
-            <span>FREQUENCY</span>
+        <div class="osc-bank__label__container">
+            <div class="osc-bank__label switch__label--vertical--two-line">
+                <h3>OSCILLATOR-1</h3>
+                <span>FREQUENCY</span>
+            </div>
         </div>
 
-        <h2 class="osc-bank__label">OSCILLATOR BANK</h2>
+        <h2 class="control-surface__label">OSCILLATOR BANK</h2>
 
     </div>
 
     
     <div class="mixer">
 
-        <div class="mixer__osc-one-vol knob">
+        <div class="mixer__osc-one-vol knob__container">
             <label class="knob__label" for="osc-one-vol">VOLUME</label>
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="osc-one-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="mixer__ext-input-vol knob">
-            <label class="knob__label" for="external-input-volume">
+        <div class="mixer__ext-input-vol knob__container">
+            <label class="knob__label knob__label--two-line" for="external-input-volume">
                 <span>EXTERNAL</span>
                 <span>INPUT VOLUME</span>
             </label>
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="ext-input-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="mixer__osc-two-vol knob">
+        <div class="mixer__osc-two-vol knob__container">
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="osc-two-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="mixer__noise-vol knob">
+        <div class="mixer__noise-vol knob__container">
             <label class="knob__label" for="noise-vol">NOISE VOLUME</label>
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="noise-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
-        <div class="mixer__osc-three-vol knob">
+        <div class="mixer__osc-three-vol knob__container">
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="osc-three-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
         <div class="mixer__switches">
-            <input class="switch" type="range" min="0" max="1" step="1" name="osc-one-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" name="ext-input-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" name="osc-two-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" name="noise-switch">
-            <input class="switch" type="range" min="0" max="1" step="1" name="osc-three-switch">
+            <div class="switch__container--on">
+                <input class="switch" type="range" min="0" max="1" step="1" name="osc-one-switch">
+            </div>
+            <div class="switch__container--on">
+                <input class="switch" type="range" min="0" max="1" step="1" name="ext-input-switch">
+            </div>
+            <div class="switch__container--on">
+                <input class="switch" type="range" min="0" max="1" step="1" name="osc-two-switch">
+            </div>
+            <div class="switch__container--on">
+                <input class="switch" type="range" min="0" max="1" step="1" name="noise-switch">
+            </div>
+            <div class="switch__container--on">
+                <input class="switch" type="range" min="0" max="1" step="1" name="osc-three-switch">
+            </div>
         </div>
 
         <div class="mixer__overload">OVERLOAD</div>
 
-        <div class="mixer__white-pink-switch">
-            <label class="mixer__white-pink-switch__white" for="white-pink">WHITE</label>
+        <div class="mixer__white-pink-switch switch__container">
+            <label class="switch__label switch__label--vertical" for="white-pink">WHITE</label>
             <input class="switch switch--vertical" type="range" min="0" max="1" step="1" name="white-pink-switch">
-            <label class="mixer__white-pink-switch__pink" for="white-pink">PINK</label>
+            <label class="switch__label switch__label--vertical switch__label--vertical--bottom" for="white-pink">PINK</label>
         </div>
 
-        <h2 class="mixer__label">MIXER</h2>
+        <h2 class="control-surface__label">MIXER</h2>
 
     </div>
     
@@ -161,60 +170,61 @@
 
         <div class="modifiers__filter">
 
-            <div class="knob">
-                <label for="cutoff-freq">CUTOFF FREQUENCY</label>
+            <div class="knob__container">
+                <label class="knob__label" for="cutoff-freq">CUTOFF FREQUENCY</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="cutoff-freq" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label class="knob__label" for="emphasis">
+            <div class="knob__container">
+                <label class="knob__label knob__label--two-line" for="emphasis">
                     <h3>FILTER</h3>
                     <span>EMPHASIS</span>
                 </label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="emphasis" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label class="knob__label" for="contour">
+            <div class="knob__container">
+                <label class="knob__label knob__label--two-line" for="contour">
                     <span>AMOUNT</span>
                     <span>OF CONTOUR</span>
                 </label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="contour" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label for="filter-attack">ATTACK TIME</label>
+            <div class="knob__container">
+                <label class="knob__label" for="filter-attack">ATTACK TIME</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="filter-attack" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label for="filter-decay">DECAY TIME</label>
+            <div class="knob__container">
+                <label class="knob__label" for="filter-decay">DECAY TIME</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="filter-decay" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label for="filter-sustain">SUSTAIN LEVEL</label>
+            <div class="knob__container">
+                <label class="knob__label" for="filter-sustain">SUSTAIN LEVEL</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="filter-sustain" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
             <div class="modifiers__filter__switches">
 
-                <div class="switch">
-                    <label class="modifiers__filter__filter-mod__label" for="filter-mod-switch">
+                <div class="switch__container">
+                    <label class="switch__label switch__label--two-line" for="filter-mod-switch">
                         <span>FILTER</span>
                         <span>MODULATION</span>
                     </label>
                     <input class="switch" type="range" min="0" max="1" step="1" name="filter-mod-switch">
                 </div>
-        
-                <input class="switch" type="range" min="0" max="1" step="1" name="key-control-one-switch">
                 
-                <div class="switch">
-                    <label class="modifiers__filter__key-control__label" for="key-control-two-switch">
+                <div class="switch__container">
+                    <input class="switch" type="range" min="0" max="1" step="1" name="key-control-one-switch">
+                </div>
+                
+                <div class="switch__container">
+                    <label class="switch__label switch__label--two-line" for="key-control-two-switch">
                         <span>KEYBOARD</span>
                         <span>CONTROL</span>
                     </label>
-
                     <input class="switch" type="range" min="0" max="1" step="1" name="key-control-two-switch">
                 </div>
 
@@ -224,20 +234,18 @@
 
         <div class="modifiers__loudness-contour">
 
-            <h3 class="control-surface__label--top">LOUDNESS CONTOUR</h3>
-
-            <div class="knob">
-                <label for="loudness-attack">ATTACK TIME</label>
+            <div class="knob__container">
+                <label class="knob__label" for="loudness-attack">ATTACK TIME</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="loudness-attack" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label for="loudness-decay">DECAY TIME</label>
+            <div class="knob__container">
+                <label class="knob__label knob__label--two-line" for="loudness-decay"><h3>LOUDNESS CONTOUR</h3><span>DECAY TIME</span></label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="loudness-decay" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
-            <div class="knob">
-                <label for="loudness-sustain">SUSTAIN LEVEL</label>
+            <div class="knob__container">
+                <label class="knob__label" for="loudness-sustain">SUSTAIN LEVEL</label>
                 <input class="input-knob" type="range" min="0" max="1" step="0.01" name="loudness-sustain" data-src="resources/images/knobs/knob.png" data-sprites="30">
             </div>
 
@@ -248,8 +256,8 @@
 
     <div class="output">
 
-        <div class="knob">
-            <label for="output-vol">VOLUME</label>
+        <div class="knob__container">
+            <label class="knob__label" for="output-vol">VOLUME</label>
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="output-vol" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
@@ -259,20 +267,20 @@
 
     <div class="pitch-mod">
 
-        <div class="pitch-mod__lfo-rate knob">
-            <label for="lfo-rate">LFO RATE</label>
+        <div class="pitch-mod__lfo-rate knob__container">
+            <label class="knob__label" for="lfo-rate">LFO RATE</label>
             <input class="input-knob" type="range" min="0" max="1" step="0.01" name="lfo-rate" data-src="resources/images/knobs/knob.png" data-sprites="30">
         </div>
 
         <div class="pitch-mod__switches">
 
-            <div class="pitch-mod__glide-switch">
-                <label class="pitch-mod__glide-switch__label" for="glide-switch">GLIDE</label>
+            <div class="pitch-mod__glide-switch  switch__container">
+                <label class="switch__label" for="glide-switch">GLIDE</label>
                 <input class="switch" type="range" min="0" max="1" step="1" name="glide-switch">
             </div>
 
-            <div class="pitch-mod__decay-switch">
-                <label class="pitch-mod__decay-switch__label" for="decay-switch">DECAY</label>
+            <div class="pitch-mod__decay-switch switch__container">
+                <label class="switch__label" for="decay-switch">DECAY</label>
                 <input class="switch" type="range" min="0" max="1" step="1" name="decay-switch">
             </div>
             
@@ -294,75 +302,36 @@
 
     </div>
 
-    <div class="container">
-        <div class="keyboard">
-            <div class="key" data-note="A" data-octave="0">A</div><div class="key" data-note="B" data-octave="0">B</div><div class="key" data-note="C" data-octave="0">C</div><div class="key" data-note="D" data-octave="0">D</div><div class="key" data-note="E" data-octave="0">E</div><div class="key" data-note="F" data-octave="0">F</div><div class="key" data-note="G" data-octave="0">G</div><div class="key" data-note="A" data-octave="1">A</div><div class="key" data-note="B" data-octave="1">B</div><div class="key" data-note="C" data-octave="1">C</div><div class="key" data-note="D" data-octave="1">D</div><div class="key" data-note="E" data-octave="1">E</div><div class="key" data-note="F" data-octave="1">F</div><div class="key" data-note="G" data-octave="1">G</div><div class="key" data-note="A" data-octave="2">A</div>
-        </div>
+    <div class="keyboard">
+        <div class="key" data-note="F" data-octave="0"></div>
+        <div class="key" data-note="G" data-octave="0"></div>
+        <div class="key" data-note="A" data-octave="1"></div>
+        <div class="key" data-note="B" data-octave="1"></div>
+        <div class="key" data-note="C" data-octave="1"></div>
+        <div class="key" data-note="D" data-octave="1"></div>
+        <div class="key" data-note="E" data-octave="1"></div>
+        <div class="key" data-note="F" data-octave="1"></div>
+        <div class="key" data-note="G" data-octave="1"></div>
+        <div class="key" data-note="A" data-octave="2"></div>
+        <div class="key" data-note="B" data-octave="2"></div>
+        <div class="key" data-note="C" data-octave="2"></div>
+        <div class="key" data-note="D" data-octave="2"></div>
+        <div class="key" data-note="E" data-octave="2"></div>
+        <div class="key" data-note="F" data-octave="2"></div>
+        <div class="key" data-note="G" data-octave="2"></div>
+        <div class="key" data-note="A" data-octave="3"></div>
+        <div class="key" data-note="B" data-octave="3"></div>
+        <div class="key" data-note="C" data-octave="3"></div>
+        <div class="key" data-note="D" data-octave="3"></div>
+        <div class="key" data-note="E" data-octave="3"></div>
+        <div class="key" data-note="F" data-octave="3"></div>
+        <div class="key" data-note="G" data-octave="3"></div>
+        <div class="key" data-note="A" data-octave="4"></div>
+        <div class="key" data-note="B" data-octave="4"></div>
+        <div class="key" data-note="C" data-octave="4"></div>
     </div>
 
 </div>
-
-
-<!-- <div class="controls">
-    <div class="volumes">
-        <label for="oscOneVolume">Osc One Volume: </label>
-        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscOneVolume" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-        <label for="oscTwoVolume">Osc Two Volume:</label>
-        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="oscTwoVolume" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-        <label for="masterVolume">Master Volume:</label>
-        <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="masterVolume" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-    </div>
-</div>
-<div class="controls">
-    <div class="envelope">
-        <label for="attack">Attack: </label>
-        <input type="range" min="0.01" max="5" step="0.01" list="envelope" name="attack" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-        <label for="release">Release: </label>
-        <input type="range" min="0.01" max="5" step="0.01" list="envelope" name="release" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-        <label for="modulation-depth">Modulation Depth: </label>
-        <input type="range" min="0" max="32" step="0.25" name="modulation-depth" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-        <label for="modulation-rate">Modulation Rate: </label>
-        <input type="range" min="3" max="32" step="0.25" name="modulation-rate" class="input-knob" data-src="resources/images/knobs/knob.png" data-sprites="30">
-    </div>
-</div>
-<div class="controls">
-    <label for="oscOneWaveform">Osc One Waveform: </label>
-    <select name="oscOneWaveform">
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-        <option value="sawtooth">Sawtooth</option>
-        <option value="triangle">Triangle</option>
-        <option value="custom">Custom</option>
-    </select>
-    <label for="oscTwoWaveform">Osc Two Waveform: </label>
-    <select name="oscTwoWaveform">
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-        <option value="sawtooth">Sawtooth</option>
-        <option value="triangle">Triangle</option>
-        <option value="custom">Custom</option>
-    </select>
-</div>
-<div class="controls">
-    <label for="oscOneRange">Osc One Range: </label>
-    <select name="oscOneRange">
-        <option value="5">2'</option>
-        <option value="4">4'</option>
-        <option value="3">8'</option>
-        <option value="2">16'</option>
-        <option value="1">32'</option>
-        <option value="0">LO'</option>
-    </select>
-    <label for="oscTwoRange">Osc Two Range: </label>
-    <select name="oscTwoRange">
-        <option value="5">2'</option>
-        <option value="4">4'</option>
-        <option value="3">8'</option>
-        <option value="2">16'</option>
-        <option value="1">32'</option>
-        <option value="0">LO'</option>
-    </select>
-</div> -->
 
 <script src="resources/js/input-knobs-master/input-knobs.js"></script>
 <script src="/app.js" defer></script>

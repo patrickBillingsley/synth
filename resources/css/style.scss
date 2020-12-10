@@ -24,13 +24,6 @@ h2 {
     font-size: 2rem;
     justify-self: center;
 }
-label {
-    position: absolute;
-    transform: translateY(-58px);
-    white-space: nowrap;
-    display: grid;
-    justify-items: center;
-}
 input[type=range] {
     -webkit-appearance: none;
     width: 100px;
@@ -57,9 +50,25 @@ input[type=range] {
 
 
 .knob {
-    display: grid;
-    place-items: center;
-    position: relative;
+    &__container {
+        width: 100px;
+        height: 100px;
+        display: grid;
+        place-items: center;
+        position: relative;
+    }
+
+    &__label {
+        position: absolute;
+        top: -25px;
+        white-space: nowrap;
+        display: grid;
+        justify-items: center;
+
+        &--two-line {
+            top: -35px;
+        }
+    }
 }
 
 .switch {
@@ -67,12 +76,62 @@ input[type=range] {
     place-items: center;
     position: relative;
 
-    &__label {
-        background-color: black;
-    }
+    &__container {
+        overflow: visible;
+        display: grid;
+        justify-items: center;
+        position: relative;
 
+        &--on {
+            width: 100%;
+            height: 83px;
+            display: grid;
+            place-items: center;
+            position: relative;
+
+            &::after {
+                content: "ON";
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
+        }
+    }
+    
     &--vertical {
         transform: rotate(-90deg);
+    }
+    &__label {
+        width: 120px;
+        background-color: black;
+        position: absolute;
+        display: grid;
+        justify-items: center;
+        top: -33px;
+
+        &--two-line {
+            top: -50px;
+        }
+        
+        &--vertical {
+            width: 70px;
+            top: -60px;
+
+            &--two-line {
+                top: -75px;
+            }
+
+            &--bottom {
+                top: 63px;
+            }
+        }
+        
+        &--split {
+            top: unset;
+            bottom: -37px;
+            display: flex;
+            justify-content: space-between;
+        }
     }
 
     &::-moz-range-thumb {
@@ -150,20 +209,7 @@ input[type=range] {
     }
 
     &__osc-filter-switch {
-        white-space: nowrap;
         grid-area: osc-filter-switch;
-        position: relative;
-
-        &__label {
-            font-size: 0.75rem;
-            position: absolute;
-            bottom: -32px;
-            left: -15px;
-
-            &--right {
-                left: 50px;
-            }
-        }
     }
 
     &__noise-lfo-switch {
@@ -243,22 +289,16 @@ input[type=range] {
         position: absolute;
         top: 425px;
         left: -5px;
-
-        &__label {
-            top: -15px;
-        }
     }
 
     &__label {
         display: grid;
         justify-items: center;
         align-content: flex-start;
-        position: absolute;
-        bottom: 0;
-
-        &--top {
+        
+        &__container {
+            height: 100%;
             grid-area: osc-one-label;
-            top: 0;
         }
     }
 }
@@ -317,26 +357,7 @@ input[type=range] {
     }
 
     &__white-pink-switch {
-        height: 100px;
-        display: grid;
-        place-items: center;
         grid-area: white-pink-switch;
-        position: relative;
-
-        &__white {
-            position: absolute;
-            top: 40px;
-        }
-
-        &__pink {
-            position: absolute;
-            top: 175px;
-        }
-    }
-
-    &__label {
-        position: absolute;
-        bottom: 0;
     }
 }
 
@@ -349,7 +370,7 @@ input[type=range] {
     gap: 0.15rem;
 
     &__filter {
-        padding: 25px 0 0 75px;
+        padding: 50px 0 0 75px;
         background-color: black;
         display: grid;
         grid-template-rows: repeat(2, 1fr);
@@ -365,40 +386,15 @@ input[type=range] {
             left: -50px;
 
         }
-
-        &__filter-mod {
-             
-            &__label {
-                top: 7px;
-            }
-        }
-
-        &__key-control {
-
-            &__label {
-                top: 7px;
-            }
-        }
     }
 
     &__loudness-contour {
-        padding: 25px 0 0 75px;
+        padding: 50px 0 0 75px;
         background-color: black;
         display: grid;
         grid-template-rows: 3fr 1fr;
         grid-template-columns: repeat(3, 1fr);
         position: relative;
-
-        &__label {
-            position: absolute;
-            top: 5px;
-            justify-self: center;
-        }
-    }
-
-    &__label {
-        position: absolute;
-        bottom: 0;
     }
 }
 .output {
@@ -407,14 +403,8 @@ input[type=range] {
     background-color: black;
     grid-area: output;
     display: grid;
-    align-items: center;
+    place-items: center;
     position: relative;
-
-    &__label {
-        position: absolute;
-        bottom: 0;
-        justify-self: center;
-    }
 }
 .pitch-mod {
     width: 350px;
@@ -430,6 +420,7 @@ input[type=range] {
 
     &__lfo-rate {
         grid-area: lfo-rate;
+        place-self: center;
     }
 
     &__switches {
@@ -443,20 +434,12 @@ input[type=range] {
         display: grid;
         justify-items: center;
         position: relative;
-
-        &__label {
-            top: 23px;
-        }
     }
 
     &__decay-switch {
         display: grid;
         justify-items: center;
         position: relative;
-
-        &__label {
-            top: 23px;
-        }
     }
 
     &__wheels {
@@ -476,7 +459,7 @@ input[type=range] {
         &__label {
             justify-self: center;
             position: absolute;
-            bottom: 0;
+            bottom: 170px;
         }
     }
     
@@ -489,29 +472,24 @@ input[type=range] {
         &__label {
             justify-self: center;
             position: absolute;
-            bottom: 0;
+            bottom: 170px;
         }
     }
 }
 
-.container {
+.keyboard {
     width: 100%;
     height: 600px;
     background-color: darkslategray;
-    white-space: nowrap;
-    overflow: scroll;
-    scrollbar-width: none;
     grid-area: keyboard;
-}
-.octave {
-    display: inline-block;
+    display: grid;
+    grid-template-columns: repeat(26, 1fr);
+    gap: 3px;
 }
 .key {
-    width: 100px;
-    height: 60vh;
-    margin: 0 3px 0 0;
+    width: auto;
+    height: auto;
     background-color: ivory;
-    display: inline-block;
 }
 
 

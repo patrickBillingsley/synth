@@ -182,8 +182,8 @@ const oscFilterSwitchElem = document.querySelector('[name="osc-filter-switch"]')
 const noiseLfoSwitchElem = document.querySelector('[name="noise-lfo-switch"]');
 
 const controllers = {
-    oscOneFreq: new Knob(oscOneFreqElem, oscOne, 'freq'),
-    glide: new Knob(glideElem, [oscOne, oscTwo, oscThree], 'glide'),
+    oscOneFreq: new Knob(oscOneFreqElem, 'oscOne', 'freq'),
+    glide: new Knob(glideElem, ['oscOne', 'oscTwo', 'oscThree'], 'glide'),
     modMix: new Knob(modMixElem),
     oscFilterSwitch: new Switch(oscFilterSwitchElem),
     noiseLfoSwitch: new Switch(noiseLfoSwitchElem)
@@ -217,16 +217,16 @@ const oscModSwitchElem = document.querySelector('[name="osc-mod-switch"]');
 const oscThreeControlSwitchElem = document.querySelector('[name="osc-three-control-switch"]');
 
 const oscBank = {
-    oscOneRange: new Range(oscOneRangeElem, oscOne, 'range'),
-    oscTwoRange: new Range(oscTwoRangeElem, oscTwo, 'range'),
-    oscThreeRange: new Range(oscThreeRangeElem, oscThree, 'range'),
-    oscTwoFreq: new Knob(oscTwoFreqElem, oscTwo, 'freq'),
-    oscThreeFreq: new Knob(oscThreeFreqElem, oscThree, 'freq'),
-    oscOneWaveform: new Range(oscOneWaveformElem, oscOne, 'waveform'),
-    oscTwoWaveform: new Range(oscTwoWaveformElem, oscTwo, 'waveform'),
-    oscThreeWaveform: new Range(oscThreeWaveformElem, oscThree, 'waveform'),
-    oscModSwitch: new Switch(oscModSwitchElem, [oscOne, oscTwo, oscThree], 'mod'),
-    oscThreeControlSwitch: new Switch(oscThreeControlSwitchElem, oscThree, 'control')
+    oscOneRange: new Range(oscOneRangeElem, 'oscOne', 'range'),
+    oscTwoRange: new Range(oscTwoRangeElem, 'oscTwo', 'range'),
+    oscThreeRange: new Range(oscThreeRangeElem, 'oscThree', 'range'),
+    oscTwoFreq: new Knob(oscTwoFreqElem, 'oscTwo', 'freq'),
+    oscThreeFreq: new Knob(oscThreeFreqElem, 'oscThree', 'freq'),
+    oscOneWaveform: new Range(oscOneWaveformElem, 'oscOne', 'waveform'),
+    oscTwoWaveform: new Range(oscTwoWaveformElem, 'oscTwo', 'waveform'),
+    oscThreeWaveform: new Range(oscThreeWaveformElem, 'oscThree', 'waveform'),
+    oscModSwitch: new Switch(oscModSwitchElem, ['oscOne', 'oscTwo', 'oscThree'], 'mod'),
+    oscThreeControlSwitch: new Switch(oscThreeControlSwitchElem, 'oscThree', 'control')
 }
 
 
@@ -253,15 +253,15 @@ const whitePinkSwitchElem = document.querySelector('[name="white-pink-switch"]')
 
 
 const mixer = {
-    oscOneVol: new Knob(oscOneVolElem, oscOne, 'vol'),
-    oscTwoVol: new Knob(oscTwoVolElem, oscTwo, 'vol'),
-    oscThreeVol: new Knob(oscThreeVolElem, oscThree, 'vol'),
+    oscOneVol: new Knob(oscOneVolElem, 'oscOne', 'vol'),
+    oscTwoVol: new Knob(oscTwoVolElem, 'oscTwo', 'vol'),
+    oscThreeVol: new Knob(oscThreeVolElem, 'oscThree', 'vol'),
     extInputVol: new Knob(extInputVolElem),
     noiseVol: new Knob(noiseVolElem),
 
-    oscOneSwitch: new Switch(oscOneSwitchElem, oscOne, 'on'),
-    oscTwoSwitch: new Switch(oscTwoSwitchElem, oscTwo, 'on'),
-    oscThreeSwitch: new Switch(oscThreeSwitchElem, oscThree, 'on'),
+    oscOneSwitch: new Switch(oscOneSwitchElem, 'oscOne', 'on'),
+    oscTwoSwitch: new Switch(oscTwoSwitchElem, 'oscTwo', 'on'),
+    oscThreeSwitch: new Switch(oscThreeSwitchElem, 'oscThree', 'on'),
     extInputSwitch: new Switch(extInputSwitchElem),
     noiseSwitch: new Switch(noiseSwitchElem),
     whitePinkSwitch: new Switch(whitePinkSwitchElem)
@@ -298,9 +298,9 @@ const loudnessDecayElem = document.querySelector('[name="loudness-decay"]');
 const loudnessSustainElem = document.querySelector('[name="loudness-sustain"]');
 
 const loudness = {
-    attack: new Knob(loudnessAttackElem, master, 'attack'),
-    decay: new Knob(loudnessDecayElem, master, 'decay'),
-    sustain: new Knob(loudnessSustainElem, master, 'sustain')
+    attack: new Knob(loudnessAttackElem, 'master', 'attack'),
+    decay: new Knob(loudnessDecayElem, 'master', 'decay'),
+    sustain: new Knob(loudnessSustainElem, 'master', 'sustain')
 };
 
 
@@ -311,14 +311,14 @@ const loudness = {
 const outputVolElem = document.querySelector('[name="output-vol"]');
 
 const output = {
-    outputVol: new Knob(outputVolElem, master, 'vol')
+    outputVol: new Knob(outputVolElem, 'master', 'vol')
 }
 
 //----------  CONTROL CONNECTIONS  ----------
 
 knobArray.forEach(knob => {
 
-    if(knob.slave == oscOne) {
+    if(knob.slave == 'oscOne') {
 
         if(knob.property == 'range') {
             knob.elem.addEventListener('input', event => {
@@ -343,7 +343,7 @@ knobArray.forEach(knob => {
         }
     }
 
-    if(knob.slave == oscTwo) {
+    if(knob.slave == 'oscTwo') {
     
         if(knob.property == 'range') {
             knob.elem.addEventListener('input', event => {
@@ -367,7 +367,7 @@ knobArray.forEach(knob => {
         }
     }
 
-    if(knob.slave == oscThree) {
+    if(knob.slave == 'oscThree') {
     
         if(knob.property == 'range') {
             knob.elem.addEventListener('input', event => {
@@ -391,7 +391,7 @@ knobArray.forEach(knob => {
         }
     }
 
-    if(knob.slave == master) {
+    if(knob.slave == 'master') {
 
         if(knob.property == 'vol') {
             knob.elem.addEventListener('input', event => {

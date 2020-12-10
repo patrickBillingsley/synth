@@ -29,16 +29,6 @@ h2 {
       justify-self: center;
 }
 
-label {
-  position: absolute;
-  -webkit-transform: translateY(-58px);
-          transform: translateY(-58px);
-  white-space: nowrap;
-  display: -ms-grid;
-  display: grid;
-  justify-items: center;
-}
-
 input[type=range] {
   -webkit-appearance: none;
   width: 100px;
@@ -61,11 +51,26 @@ input[type=range]::-ms-track {
   color: transparent;
 }
 
-.knob {
+.knob__container {
+  width: 100px;
+  height: 100px;
   display: -ms-grid;
   display: grid;
   place-items: center;
   position: relative;
+}
+
+.knob__label {
+  position: absolute;
+  top: -25px;
+  white-space: nowrap;
+  display: -ms-grid;
+  display: grid;
+  justify-items: center;
+}
+
+.knob__label--two-line {
+  top: -35px;
 }
 
 .switch {
@@ -75,13 +80,71 @@ input[type=range]::-ms-track {
   position: relative;
 }
 
-.switch__label {
-  background-color: black;
+.switch__container {
+  overflow: visible;
+  display: -ms-grid;
+  display: grid;
+  justify-items: center;
+  position: relative;
+}
+
+.switch__container--on {
+  width: 100%;
+  height: 83px;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.switch__container--on::after {
+  content: "ON";
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .switch--vertical {
   -webkit-transform: rotate(-90deg);
           transform: rotate(-90deg);
+}
+
+.switch__label {
+  width: 120px;
+  background-color: black;
+  position: absolute;
+  display: -ms-grid;
+  display: grid;
+  justify-items: center;
+  top: -33px;
+}
+
+.switch__label--two-line {
+  top: -50px;
+}
+
+.switch__label--vertical {
+  width: 70px;
+  top: -60px;
+}
+
+.switch__label--vertical--two-line {
+  top: -75px;
+}
+
+.switch__label--vertical--bottom {
+  top: 63px;
+}
+
+.switch__label--split {
+  top: unset;
+  bottom: -37px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .switch::-moz-range-thumb {
@@ -163,22 +226,9 @@ input[type=range]::-ms-track {
 }
 
 .controllers__osc-filter-switch {
-  white-space: nowrap;
   -ms-grid-row: 4;
   -ms-grid-column: 1;
   grid-area: osc-filter-switch;
-  position: relative;
-}
-
-.controllers__osc-filter-switch__label {
-  font-size: 0.75rem;
-  position: absolute;
-  bottom: -32px;
-  left: -15px;
-}
-
-.controllers__osc-filter-switch__label--right {
-  left: 50px;
 }
 
 .controllers__noise-lfo-switch {
@@ -279,25 +329,19 @@ input[type=range]::-ms-track {
   left: -5px;
 }
 
-.osc-bank__osc-three-control-switch__label {
-  top: -15px;
-}
-
 .osc-bank__label {
   display: -ms-grid;
   display: grid;
   justify-items: center;
   -ms-flex-line-pack: start;
       align-content: flex-start;
-  position: absolute;
-  bottom: 0;
 }
 
-.osc-bank__label--top {
+.osc-bank__label__container {
+  height: 100%;
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: osc-one-label;
-  top: 0;
 }
 
 .mixer {
@@ -376,29 +420,9 @@ input[type=range]::-ms-track {
 }
 
 .mixer__white-pink-switch {
-  height: 100px;
-  display: -ms-grid;
-  display: grid;
-  place-items: center;
   -ms-grid-row: 3;
   -ms-grid-column: 4;
   grid-area: white-pink-switch;
-  position: relative;
-}
-
-.mixer__white-pink-switch__white {
-  position: absolute;
-  top: 40px;
-}
-
-.mixer__white-pink-switch__pink {
-  position: absolute;
-  top: 175px;
-}
-
-.mixer__label {
-  position: absolute;
-  bottom: 0;
 }
 
 .modifiers {
@@ -415,7 +439,7 @@ input[type=range]::-ms-track {
 }
 
 .modifiers__filter {
-  padding: 25px 0 0 75px;
+  padding: 50px 0 0 75px;
   background-color: black;
   display: -ms-grid;
   display: grid;
@@ -437,16 +461,8 @@ input[type=range]::-ms-track {
   left: -50px;
 }
 
-.modifiers__filter__filter-mod__label {
-  top: 7px;
-}
-
-.modifiers__filter__key-control__label {
-  top: 7px;
-}
-
 .modifiers__loudness-contour {
-  padding: 25px 0 0 75px;
+  padding: 50px 0 0 75px;
   background-color: black;
   display: -ms-grid;
   display: grid;
@@ -455,18 +471,6 @@ input[type=range]::-ms-track {
   -ms-grid-columns: (1fr)[3];
       grid-template-columns: repeat(3, 1fr);
   position: relative;
-}
-
-.modifiers__loudness-contour__label {
-  position: absolute;
-  top: 5px;
-  -ms-grid-column-align: center;
-      justify-self: center;
-}
-
-.modifiers__label {
-  position: absolute;
-  bottom: 0;
 }
 
 .output {
@@ -478,17 +482,8 @@ input[type=range]::-ms-track {
   grid-area: output;
   display: -ms-grid;
   display: grid;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  place-items: center;
   position: relative;
-}
-
-.output__label {
-  position: absolute;
-  bottom: 0;
-  -ms-grid-column-align: center;
-      justify-self: center;
 }
 
 .pitch-mod {
@@ -509,6 +504,7 @@ input[type=range]::-ms-track {
   -ms-grid-row: 1;
   -ms-grid-column: 1;
   grid-area: lfo-rate;
+  place-self: center;
 }
 
 .pitch-mod__switches {
@@ -531,19 +527,11 @@ input[type=range]::-ms-track {
   position: relative;
 }
 
-.pitch-mod__glide-switch__label {
-  top: 23px;
-}
-
 .pitch-mod__decay-switch {
   display: -ms-grid;
   display: grid;
   justify-items: center;
   position: relative;
-}
-
-.pitch-mod__decay-switch__label {
-  top: 23px;
 }
 
 .pitch-mod__wheels {
@@ -572,7 +560,7 @@ input[type=range]::-ms-track {
   -ms-grid-column-align: center;
       justify-self: center;
   position: absolute;
-  bottom: 0;
+  bottom: 170px;
 }
 
 .pitch-mod__mod-wheel {
@@ -587,32 +575,28 @@ input[type=range]::-ms-track {
   -ms-grid-column-align: center;
       justify-self: center;
   position: absolute;
-  bottom: 0;
+  bottom: 170px;
 }
 
-.container {
+.keyboard {
   width: 100%;
   height: 600px;
   background-color: darkslategray;
-  white-space: nowrap;
-  overflow: scroll;
-  scrollbar-width: none;
   -ms-grid-row: 2;
   -ms-grid-column: 2;
   -ms-grid-column-span: 4;
   grid-area: keyboard;
-}
-
-.octave {
-  display: inline-block;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[26];
+      grid-template-columns: repeat(26, 1fr);
+  gap: 3px;
 }
 
 .key {
-  width: 100px;
-  height: 60vh;
-  margin: 0 3px 0 0;
+  width: auto;
+  height: auto;
   background-color: ivory;
-  display: inline-block;
 }
 
 #pitch-wheel {
