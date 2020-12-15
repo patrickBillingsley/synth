@@ -683,8 +683,8 @@ function toObject(keys, values) {
     oscThree.osc.type = oscBank.oscThreeWaveform.waveform;
     gainThree.lvl.gain.value = mixer.oscThreeVol.value;
 
-    oscThree.glideTime = controllers.glide.value;
-    oscThree.glideOn = pitchMod.glideSwitch.value;
+    oscThree.glideTime = controllers.glide.elem.value;
+    oscThree.glideOn = pitchMod.glideSwitch.elem.value;
 
     if(mixer.oscThreeSwitch.value == 1) {
         gainThree.lvl.connect(master.lvl);
