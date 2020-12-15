@@ -1,4 +1,9 @@
-const delay = 0.001;
+//----------  GLOBOAL VARIABLES ----------
+
+const delay = 0.01;
+
+
+
 
 //----------  KNOB PROPERTIES  ----------
 
@@ -12,6 +17,9 @@ window.inputKnobsOptions = { knobDiameter: '100' };
 class Oscillator {
     constructor() {
         this.range;
+        this.glideOn;
+        this.glideTime;
+        this.tune;
 
         this.osc = context.createOscillator();
         this.osc.start();
@@ -28,7 +36,7 @@ class Oscillator {
                 }
                 this.osc.frequency.cancelScheduledValues(context.currentTime);
 
-                if(this.glideOn) {
+                if(this.glideOn == 1) {
                     this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay + parseFloat(this.glideTime));
                 } else {
                     this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay);
@@ -40,6 +48,8 @@ class Oscillator {
 class Gain {
     constructor() {
         this.vol;
+        this.decay;
+        this.decayOn;
 
         this.lvl = context.createGain();
         this.lvl.gain.value = 0;
@@ -62,10 +72,21 @@ class Gain {
     }
     stop() {
         if(this.lvl.gain.value) {
+            let time;
+
             this.lvl.gain.setValueAtTime(this.lvl.gain.value, context.currentTime);
             this.lvl.gain.cancelScheduledValues(context.currentTime + delay);
-            this.lvl.gain.exponentialRampToValueAtTime(0.001, context.currentTime + parseFloat(this.decay) + delay);
-            this.lvl.gain.setValueAtTime(0, context.currentTime + parseFloat(this.decay) + delay);
+
+            if(this.decayOn == 1) {
+                console.log('decay is on');
+                time = context.currentTime + parseFloat(this.decay) + delay;
+            } else {
+                console.log('decay is off');
+                time = context.currentTime + delay;
+            }
+
+            this.lvl.gain.exponentialRampToValueAtTime(0.001, time);
+            this.lvl.gain.setValueAtTime(0, time);
         }
     }
 }
@@ -154,8 +175,31 @@ const gainTwo = new Gain();
 const gainThree = new Gain();
 const gainLfo = new Gain();
 
-const master = new Gain();
+const master = new Gain()
 master.lvl.connect(context.destination);
+
+
+
+
+//----------  TUNING SECTION  ----------
+
+const tune = {
+    master: null,
+    oscTwo: null,
+    oscThree: null,
+
+    tuneMaster() {
+        oscOne.osc.detune.setValueAtTime(this.master, context.currentTime);
+    },
+    tuneOscTwo() {
+        let cents = Number(this.master) + Number(this.oscTwo);
+        oscTwo.osc.detune.setValueAtTime(cents, context.currentTime);
+    },
+    tuneOscThree() {
+        let cents = Number(this.master) + Number(this.oscThree);
+        oscThree.osc.detune.setValueAtTime(cents, context.currentTime);
+    }
+};
 
 
 
@@ -178,7 +222,7 @@ for(i=0; i<gainArray.length-1; i++) {
 
     //----- knobs -----
 
-const oscOneFreqElem = document.querySelector('[name="osc-one-freq"]');
+const tuneElem = document.querySelector('[name="tune"]');
 const glideElem = document.querySelector('[name="glide"]');
 const modMixElem = document.querySelector('[name="mod-mix"]');
 
@@ -188,7 +232,7 @@ const oscFilterSwitchElem = document.querySelector('[name="osc-filter-switch"]')
 const noiseLfoSwitchElem = document.querySelector('[name="noise-lfo-switch"]');
 
 const controllers = {
-    oscOneFreq: new Knob(oscOneFreqElem, 'oscOne', 'freq'),
+    tune: new Knob(tuneElem, 'oscOne', 'tune'),
     glide: new Knob(glideElem, 'glide', 'time'),
     modMix: new Knob(modMixElem),
     oscFilterSwitch: new Switch(oscFilterSwitchElem),
@@ -226,11 +270,14 @@ const oscBank = {
     oscOneRange: new Range(oscOneRangeElem, 'oscOne', 'range'),
     oscTwoRange: new Range(oscTwoRangeElem, 'oscTwo', 'range'),
     oscThreeRange: new Range(oscThreeRangeElem, 'oscThree', 'range'),
-    oscTwoFreq: new Knob(oscTwoFreqElem, 'oscTwo', 'freq'),
-    oscThreeFreq: new Knob(oscThreeFreqElem, 'oscThree', 'freq'),
+
+    oscTwoFreq: new Knob(oscTwoFreqElem, 'oscTwo', 'tune'),
+    oscThreeFreq: new Knob(oscThreeFreqElem, 'oscThree', 'tune'),
+
     oscOneWaveform: new Range(oscOneWaveformElem, 'oscOne', 'waveform'),
     oscTwoWaveform: new Range(oscTwoWaveformElem, 'oscTwo', 'waveform'),
     oscThreeWaveform: new Range(oscThreeWaveformElem, 'oscThree', 'waveform'),
+    
     oscModSwitch: new Switch(oscModSwitchElem, ['oscOne', 'oscTwo', 'oscThree'], 'mod'),
     oscThreeControlSwitch: new Switch(oscThreeControlSwitchElem, 'oscThree', 'control')
 }
@@ -331,7 +378,7 @@ const decaySwitchElem = document.querySelector('[name="decay-switch"]');
 const pitchMod = {
     lfoRate: new Knob(lfoRateElem, 'lfo', 'rate'),
     glideSwitch: new Switch(glideSwitchElem, 'glide', 'on'),
-    decaySwitch: new Switch(decaySwitchElem)
+    decaySwitch: new Switch(decaySwitchElem, 'decay', 'on')
 }
 
 
@@ -364,6 +411,16 @@ knobArray.forEach(knob => {
                 gainOne.lvl.gain.setValueAtTime(knob.value, context.currentTime);
             })
         }
+
+        if(knob.property == 'tune') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                tune.master = knob.value;
+                tune.tuneMaster();
+                tune.tuneOscTwo();
+                tune.tuneOscThree();
+            })
+        }
     }
 
     if(knob.slave == 'oscTwo') {
@@ -388,6 +445,14 @@ knobArray.forEach(knob => {
                 gainTwo.lvl.gain.setValueAtTime(knob.value, context.currentTime);
             })
         }
+
+        if(knob.property == 'tune') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                tune.oscTwo = knob.value;
+                tune.tuneOscTwo();
+            })
+        }
     }
 
     if(knob.slave == 'oscThree') {
@@ -410,6 +475,14 @@ knobArray.forEach(knob => {
             knob.elem.addEventListener('input', event => {
                 knob.value = event.target.value;
                 gainThree.lvl.gain.setValueAtTime(knob.value, context.currentTime);
+            })
+        }
+
+        if(knob.property == 'tune') {
+            knob.elem.addEventListener('input', event => {
+                knob.value = event.target.value;
+                tune.oscThree = knob.value;
+                tune.tuneOscThree();
             })
         }
     }
@@ -511,7 +584,17 @@ switchArray.forEach(control => {
             }
         })
     }
+
+    if(control.slave == 'decay') {
+
+        control.elem.addEventListener('input', event => {
+            let value = event.target.value;
+            master.decayOn = value;
+        })
+    }
 })
+
+console.log(master);
 
 
 
@@ -572,6 +655,12 @@ function toObject(keys, values) {
 
     oscOne.glideTime = controllers.glide.value;
     oscOne.glideOn = pitchMod.glideSwitch.value;
+
+    if(mixer.oscOneSwitch.value == 1) {
+        gainOne.lvl.connect(master.lvl);
+    } else {
+        gainOne.lvl.disconnect(master.lvl);
+    }
     
     //----- osc 2 -----
 
@@ -581,6 +670,12 @@ function toObject(keys, values) {
 
     oscTwo.glideTime = controllers.glide.value;
     oscTwo.glideOn = pitchMod.glideSwitch.value;
+
+    if(mixer.oscTwoSwitch.value == 1) {
+        gainTwo.lvl.connect(master.lvl);
+    } else {
+        gainTwo.lvl.disconnect(master.lvl);
+    }
     
     //----- osc 3 -----
 
@@ -591,12 +686,30 @@ function toObject(keys, values) {
     oscThree.glideTime = controllers.glide.value;
     oscThree.glideOn = pitchMod.glideSwitch.value;
 
+    if(mixer.oscThreeSwitch.value == 1) {
+        gainThree.lvl.connect(master.lvl);
+    } else {
+        gainThree.lvl.disconnect(master.lvl);
+    }
+
     //----- master -----
 
     master.vol = output.outputVol.elem.value;
     master.attack = loudness.attack.value;
     master.decay = loudness.decay.value;
     master.sustain = loudness.sustain.value;
+    master.decayOn = pitchMod.decaySwitch.value;
+    console.log(master.decayOn);
+
+    //----- tune -----
+
+    tune.master = controllers.tune.value;
+    tune.oscTwo = oscBank.oscTwoFreq.value;
+    tune.oscThree = oscBank.oscThreeFreq.value;
+
+    tune.tuneMaster();
+    tune.tuneOscTwo();
+    tune.tuneOscThree();
 })();
 
 

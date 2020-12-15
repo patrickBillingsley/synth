@@ -317,7 +317,6 @@ input[type=range]::-ms-track {
 }
 
 .osc-bank__osc-mod {
-  background-color: black;
   position: absolute;
   top: 200px;
   left: -50px;
