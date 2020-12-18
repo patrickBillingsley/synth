@@ -20,6 +20,7 @@ class Oscillator {
         this.glideOn;
         this.glideTime;
         this.tune;
+        this.control = 1;
 
         this.osc = context.createOscillator();
         this.osc.start();
@@ -31,9 +32,10 @@ class Oscillator {
             if(arr.includes(note)) {
                 let multiplier = Number(this.range) + Number(octave);
                 let freq = arr[1];
-                for(i=0; i<multiplier; i++) {
+                for(i=1; i<multiplier; i++) {
                     freq = freq * 2;
                 }
+
                 this.osc.frequency.cancelScheduledValues(context.currentTime);
 
                 if(this.glideOn == 1) {
@@ -43,6 +45,16 @@ class Oscillator {
                 }
             }
         })
+    }
+    playC() {
+        let multiplier = Number(this.range)
+        let freq = fundamentalOctave.c;
+        for(i=1; i<multiplier; i++) {
+            freq = freq * 2;
+        }
+
+        this.osc.frequency.cancelScheduledValues(context.currentTime);
+        this.osc.frequency.linearRampToValueAtTime(freq, context.currentTime + delay);
     }
 }
 class Gain {
@@ -141,7 +153,7 @@ class Switch {
 
 const context = new (window.AudioContext || window.webkitAudioContext)();
 
-fundamentalOctave = { A: 13.75, Bb: 14.57, B: 15.43, C: 16.35, Db: 17.32, D: 18.36, Eb: 19.45, E: 20.6, F: 21.83, Gb: 23.13, G: 24.5, Ab: 23.13 };
+fundamentalOctave = { a: 13.75, bb: 14.57, b: 15.43, c: 16.35, db: 17.32, d: 18.36, eb: 19.45, e: 20.6, f: 21.83, gb: 23.13, g: 24.5, ab: 23.13 };
 
 
 
@@ -250,18 +262,18 @@ const oscOneRangeElem = document.querySelector('[name="osc-one-range"]');
 const oscTwoRangeElem = document.querySelector('[name="osc-two-range"]');
 const oscThreeRangeElem = document.querySelector('[name="osc-three-range"]');
 
-//----- freq -----
+    //----- freq -----
 
 const oscTwoFreqElem = document.querySelector('[name="osc-two-freq"]');
 const oscThreeFreqElem = document.querySelector('[name="osc-three-freq"]');
 
-//----- waveform -----
+    //----- waveform -----
 
 const oscOneWaveformElem = document.querySelector('[name="osc-one-waveform"]');
 const oscTwoWaveformElem = document.querySelector('[name="osc-two-waveform"]');
 const oscThreeWaveformElem = document.querySelector('[name="osc-three-waveform"]');
 
-//----- switches -----
+    //----- switches -----
 
 const oscModSwitchElem = document.querySelector('[name="osc-mod-switch"]');
 const oscThreeControlSwitchElem = document.querySelector('[name="osc-three-control-switch"]');
@@ -278,7 +290,7 @@ const oscBank = {
     oscTwoWaveform: new Range(oscTwoWaveformElem, 'oscTwo', 'waveform'),
     oscThreeWaveform: new Range(oscThreeWaveformElem, 'oscThree', 'waveform'),
     
-    oscModSwitch: new Switch(oscModSwitchElem, ['oscOne', 'oscTwo', 'oscThree'], 'mod'),
+    oscModSwitch: new Switch(oscModSwitchElem, 'oscMod', 'on'),
     oscThreeControlSwitch: new Switch(oscThreeControlSwitchElem, 'oscThree', 'control')
 }
 
@@ -559,12 +571,41 @@ switchArray.forEach(control => {
 
     if(control.slave == 'oscThree') {
 
+        if(control.property == 'on') {
+
+            control.elem.addEventListener('input', event => {
+                let value = event.target.value;
+                if(value == 1) {
+                    gainThree.lvl.connect(master.lvl);
+                } else {
+                    gainThree.lvl.disconnect(master.lvl);
+                }
+            })
+        }
+
+        if(control.property == 'control') {
+
+            control.elem.addEventListener('input', event => {
+                let value = event.target.value;
+                oscThree.control = value;
+            })
+        }
+    }
+
+    if(control.slave == 'oscMod') {
+
+        console.log(oscOne.osc.frequency);
+
+        gainThree.lvl.connect(oscOne.osc.frequency);
+
         control.elem.addEventListener('input', event => {
             let value = event.target.value;
             if(value == 1) {
-                gainThree.lvl.connect(master.lvl);
+                gainThree.lvl.connect(oscOne.osc);
+                gainThree.lvl.connect(oscTwo.osc);
             } else {
-                gainThree.lvl.disconnect(master.lvl);
+                gainThree.lvl.disconnect(oscOne.osc.frequency);
+                gainThree.lvl.disconnect(oscTwo.osc.frequency);
             }
         })
     }
@@ -594,8 +635,6 @@ switchArray.forEach(control => {
     }
 })
 
-console.log(master);
-
 
 
 
@@ -610,7 +649,12 @@ keys.forEach(key => {
 
         oscOne.play(note, octave);
         oscTwo.play(note, octave);
-        oscThree.play(note, octave);
+
+        if(oscThree.control == 1) {
+            oscThree.play(note, octave);
+        } else {
+            oscThree.playC();
+        }
 
         master.play();
     })
@@ -699,7 +743,6 @@ function toObject(keys, values) {
     master.decay = loudness.decay.value;
     master.sustain = loudness.sustain.value;
     master.decayOn = pitchMod.decaySwitch.value;
-    console.log(master.decayOn);
 
     //----- tune -----
 
